@@ -1,0 +1,12 @@
+body {
+  background: rgba(0, 200, 0, 0.1);
+  display: -ms-grid;
+  display: grid;
+  display: -ms-flexbox;
+  display: flex; }
+
+.image {
+  background: yellow url(../img/bridge.jpg) center/cover;
+  height: 100px;
+  width: 100px; }
+
