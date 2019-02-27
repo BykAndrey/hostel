@@ -3,8 +3,15 @@ const fs=require('fs');
 const path=require('path');
 //const MongoClient=require('mongodb').MongoClient;
 const mongoose=require('mongoose');
-const app=express();
+const session = require('express-session')
 
+
+
+
+const app=express();
+app.use(session({
+    secret:"hotel"
+}))
 app.use(express.static(path.join(__dirname, '/dist')))
 let db=undefined;
 

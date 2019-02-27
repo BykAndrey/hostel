@@ -12,10 +12,28 @@ class UserController {
     }
 
     create(req, res) {
-        res.send('PUT')
+        var user=new User();
+        user.name=req.body.name;
+        user.mail=req.body.mail;
+        user.password=req.body.password;
+        user.age=req.body.age;
+        user.save(function(er,data){
+            if(er){
+                return res.send(er)
+            }
+            res.send(data);
+        })
+      
+
     }
     getById(req, res) {
-        res.send('Get by id='+req.id)
+        User.find({"_id":req.params['id']},function(er,data){
+            if(er) {
+                return res.send(er)
+            }
+            res.send(data);
+        })
+        //res.send('Get by id='+req.params['id'])
     }
 
 }

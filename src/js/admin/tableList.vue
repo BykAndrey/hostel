@@ -10,7 +10,9 @@
             .utable__th Инфо
         .utable__body
             .utable__tr(v-for="item of items")
-                .utable__td {{item.name}}
+                .utable__td 
+                    p {{item.name}}
+                    p {{item.mail}}
                 .utable__td {{item.role}}
                 .utable__td {{item.last_log}}
                 .utable__td 
