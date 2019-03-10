@@ -10,7 +10,8 @@
   ],
   "scripts": {
     "dev": "webpack-dev-server --open",
-    "build": "webpack"
+    "build": "webpack",
+    "serv":"webpack --watch"
   },
   "devDependencies": {
     "@babel/core": "^7.3.3",

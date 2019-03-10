@@ -4,7 +4,8 @@ const path=require('path');
 //const MongoClient=require('mongodb').MongoClient;
 const mongoose=require('mongoose');
 const session = require('express-session')
-
+const bodyParser =require('body-parser');
+const urlencodedParser = bodyParser.urlencoded({extended: false});
 
 
 
@@ -12,6 +13,11 @@ const app=express();
 app.use(session({
     secret:"hotel"
 }))
+
+
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
 app.use(express.static(path.join(__dirname, '/dist')))
 let db=undefined;
 
