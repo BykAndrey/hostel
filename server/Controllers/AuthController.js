@@ -53,8 +53,15 @@ class AuthController{
         })
         
     }
-    logout(){
-
+    logout(req,res){
+        res.header("Cache-Control", "no-cache, no-store, must-revalidate");
+    res.header("Pragma", "no-cache");
+    res.header("Expires", 0);
+        req.session.user_id=undefined;
+        req.session.user=undefined;
+        console.log('LOG OUT2')
+        
+        return res.status(200).send({1:2});
     }
 
 }
