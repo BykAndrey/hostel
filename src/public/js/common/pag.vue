@@ -1,22 +1,32 @@
 <template lang="pug">
     .pag
-        a.pag__item(v-for="i of countPage",v-on:click="click(i, $event)",href="#") {{i}}
+        a.pag__item(v-for="i of countPage",v-on:click="click($event,i )",href="#") {{i}}
         
 
 </template>
 <script>
 export default {
     name:'pag',
-    props:['totalCount','sizePage'],
-    computed:{
-        countPage(){
-            return Math.ceil(this.totalCount/this.sizePage);
+    props:['total_count','size'],
+    data(){
+        return {
+            countPage:0,
+        }
+    },
+    watch:{
+        total_count(){
+            this.total_count=this.total_count===undefined?0:this.total_count;
+            var a= Math.ceil(parseInt(this.total_count)/parseInt(this.size));
+            this.countPage=a
         }
     },
     methods:{
-        click(i,ev){
-            this.$emit('changepage',i)
+        calcPage(){
 
+        },
+        click(ev,i){
+            ev.preventDefault();
+            this.$emit('changepage',i);
         }
     }
 }
@@ -35,7 +45,8 @@ export default {
             border-radius: 3px;
             margin: 0 3px;
             color: black;
-            &--active{
+            text-decoration: none;
+            &--active,&:hover{
                 background: rgba(0,0,0,0.7);
                 color:white;
             }

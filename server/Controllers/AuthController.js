@@ -8,6 +8,7 @@ class AuthController{
         this.db=db;
     }
     currentUser(req,res){
+        res.header("Access-Control-Allow-Origin", '*');
         console.log('===currentUser')
         console.log(req.session.user)
         console.log('===/currentUser')
@@ -18,7 +19,13 @@ class AuthController{
         return res.send(user)
     }
     login(req,res){
-        console.log(req.body.mail)
+        console.log('Route:login')
+        
+        res.header("Access-Control-Allow-Origin", '*');
+        console.log(req.body)
+    
+       // return res.send(req.body);
+        console.log(req.body.password)
         User.find({
             "mail":req.body.mail,
             //"password":req.body.password
@@ -54,6 +61,7 @@ class AuthController{
         
     }
     logout(req,res){
+        res.header("Access-Control-Allow-Origin", '*');
         res.header("Cache-Control", "no-cache, no-store, must-revalidate");
     res.header("Pragma", "no-cache");
     res.header("Expires", 0);

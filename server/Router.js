@@ -2,12 +2,21 @@
 const UserController =require( './Controllers/UserController.js');
 const AuthController =require( './Controllers/AuthController.js');
 const BuildingController =require( './Controllers/BuildingController.js');
+const bodyParser =require('body-parser');
+const urlencodedParser = bodyParser.urlencoded({extended: false});
 module.exports=function(app,db){
     const userC=new UserController(db);
     const auth=new AuthController(db);
     const building=new BuildingController(db);
 
-
+    app.use('/api/*', function(req,res,next) {
+         res.header("Access-Control-Allow-Origin", "*"); 
+         res.header("Access-Control-Allow-Credentials", "true");
+          res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
+           res.header("Access-Control-Allow-Headers", 
+           "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers"); 
+          next();
+         });
     /*Building*/
     app.get('/api/building/create',building.create.bind(building));
     app.get('/api/building',building.getList.bind(building));
@@ -19,7 +28,7 @@ module.exports=function(app,db){
 
 
 
-    app.post('/api/login',auth.login.bind(auth));
+    app.post('/api/login',urlencodedParser,auth.login.bind(auth));
     app.get('/api/current-user',auth.currentUser.bind(auth));
     app.get('/api/logout',auth.logout.bind(auth));
 

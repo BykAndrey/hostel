@@ -34,14 +34,21 @@ export default {
             var self=this;
             //self.$store.dispatch('sessionUser')
             var data={
-                mail:self.login,
-                password:self.password
+                "mail":self.login,
+                "password":self.password
             }
+            /*axios.post('http://localhost:3000/api/login',
+            {
+                bod
+            })*/
+            
              axios({
                     method:'post',
-                    url:'/api/login',
-//headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                     data:data
+                    url:'http://localhost:3000/api/login',
+                   headers: {
+                        "Content-type": "application/json"
+                    },
+                     data:JSON.stringify(data)
                 })
                 .then(function(res){
                     self.response=res.data,

@@ -4,10 +4,8 @@ const path=require('path');
 //const MongoClient=require('mongodb').MongoClient;
 const mongoose=require('mongoose');
 const session = require('express-session')
-const bodyParser =require('body-parser');
-const urlencodedParser = bodyParser.urlencoded({extended: false});
 
-
+var bodyParser = require('body-parser');
 
 const app=express();
 app.use(session({
@@ -15,8 +13,12 @@ app.use(session({
 }))
 
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+
+
+// parse application/json
+
+app.use(bodyParser.json({ strict: false}))
+app.use(bodyParser.urlencoded({ extended: true }))
 
 app.use(express.static(path.join(__dirname, '/dist')))
 let db=undefined;

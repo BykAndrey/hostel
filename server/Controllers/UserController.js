@@ -6,6 +6,7 @@ class UserController {
         this.db = db;
     }
     users(req, res) {
+        res.header("Access-Control-Allow-Origin", '*');
         console.log('Main Page');
         User.find({}, function (er, data) {
             res.send(data);
@@ -13,6 +14,7 @@ class UserController {
     }
 
     create(req, res) {
+        res.header("Access-Control-Allow-Origin", '*');
         var user=new User();
       
         user.name=req.body.name;
@@ -58,6 +60,7 @@ class UserController {
 
     }
     getById(req, res) {
+        res.header("Access-Control-Allow-Origin", '*');
         User.find({"_id":req.params['id']},function(er,data){
             if(er) {
                 return res.send(er)

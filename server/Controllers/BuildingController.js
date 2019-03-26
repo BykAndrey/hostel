@@ -4,15 +4,39 @@ class Building{
         this.db=db;
     }
     getList(req,res){
-        BuildingModel.find({},function(error,data){
+       /* BuildingModel.find({},function(error,data){
             if(error){
                 return res.send(error);
             }
             return res.send(data);
+        })*/
+        BuildingModel.find({})
+        .skip(2)
+        .limit(2)
+        .exec(function(error,data){
+            if(error){
+                return res.send(error);
+            }
+            BuildingModel.count({},function(er2,d2){
+                if(er2){
+                    return res.send(er2);
+                }
+                console.log('building')
+                res.header("Cache-Control", "no-cache, no-store, must-revalidate");
+                res.header("Pragma", "no-cache");
+                res.header("Expires", 0);
+                res.header("Access-Control-Allow-Origin", '*');
+                return res.status(200).send({
+                    data:data,
+                    count:d2
+                });
+            })
+            
         })
         //return res.status(200).send('Get List')
     }
     create(req,res){
+        res.header("Access-Control-Allow-Origin", '*');
         var user_id=req.session.user_id;
         console.log(1);
         if(user_id===undefined){

@@ -5,6 +5,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
     state:{
+        server:'http://localhost:3000',
         idUser:undefined,
         user:undefined,
     },
@@ -26,7 +27,7 @@ export default new Vuex.Store({
     },
     actions:{
         sessionUser(context,payload){
-            axios.get('/api/current-user',{
+           axios.get(context.state.server+'/api/current-user',{
 
             }).then(function(res){
                 console.log(res.data.id);

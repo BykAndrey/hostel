@@ -4,7 +4,7 @@
         router-view
 </template>
 <script>
-import v_header from './parts/Header.vue';
+import v_header from './components/Header.vue';
 export default {
     name:'app',
     components:{
