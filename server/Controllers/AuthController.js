@@ -23,7 +23,7 @@ class AuthController{
         //edit ddscsdfc
         res.header("Access-Control-Allow-Origin", '*');
         console.log(req.body)
-    //ww
+    //wwdcc
        // return res.send(req.body);
         console.log(req.body.password)
         User.find({
