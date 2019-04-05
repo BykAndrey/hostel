@@ -30,10 +30,13 @@ export default new Vuex.Store({
            axios.get(context.state.server+'/api/current-user',{
 
             }).then(function(res){
-                console.log(res.data.id);
+                console.log("session="+res.data.id);
                 if(res.data.id!==undefined){
                     console.log(res);
                     context.commit('setUser',res.data);
+                    if(payload!==undefined){
+                        payload.cb!==undefined?payload.cb():'';
+                    }
                     
                 }
                 

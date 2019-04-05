@@ -1,9 +1,13 @@
 <template lang="pug">
     .el-building
         .el-building__head
-            .el-building__address {{el.address}}
+            router-link.el-building__address(:to="'/'+el._id+'/edit'") {{el.address}}
             .el-building__date {{el.createdAt}}
         .el-building__desc {{el.desc}}
+        h2 Картинки
+        template(v-for="item in el.photo")
+            img(:src="item.url", width="100px")
+        
 </template>
 <script>
 export default {

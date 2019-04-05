@@ -5,18 +5,24 @@
 			legend {{user.name}}
 			p {{user.mail}}
 			p {{user.age}}
+			br
+			br
 			hr
-			div {{buildigns}}
-			//list-buildings()
+			createBuild
+			br
+			br
+			list-buildings()
 
 </template>
 <script>
 import axios from 'axios';
 import listBuildings from "./../components/listBuildings.vue";
+import createBuild from "./../components/createBuild.vue";
 export default {
 	name:'userPage',
 	components:{
-		listBuildings
+		listBuildings,
+		createBuild
 	},
 	data(){
 		return {

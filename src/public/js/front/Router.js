@@ -10,7 +10,7 @@ import Registration from './pages/Registration.vue';
 import MainPage from './pages/Main.vue';
 import Catalog from './pages/Catalog.vue';
 import UserPage from './pages/UserPage.vue';
-
+import EditBuilder from './pages/EditBuilder.vue'
 let routes = [
 
   {
@@ -27,21 +27,31 @@ let routes = [
     beforeEnter:(to,from,next)=>{
      
       console.log(store);
-      if(store.getters.isAuth==false){
-        next({
-          path:'/login'
-        })
-      }else{
-        next();
-      }
+      store.dispatch('sessionUser',{cb:function(){
+        console.log('store.getters.isAuth='+store.getters.isAuth)
+        if(store.getters.isAuth==false){
+          next({
+            path:'/login'
+          })
+        }else{
+          next();
+        }
+      }})
+      
     
      // 
     }
+  },
+
+  {
+    path:'/:id/edit',
+    component:EditBuilder
   },
   {
     path: '/catalog',
     component: Catalog
   },
+
   {
     path: '/',
     component: MainPage

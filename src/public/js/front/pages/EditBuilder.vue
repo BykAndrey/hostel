@@ -1,17 +1,14 @@
 <template lang="pug">
-    main.container
-        h1.title THIS IS MAIN PAGE!!!
-        createBuild
+    .container 
+        p Edit {{$route.params.id}}
+        createBuild(:id="$route.params.id")
 </template>
 <script>
 import createBuild from './../components/createBuild.vue';
 export default {
-    name:'main_page',
     components:{
         createBuild
     }
 }
 </script>
-<style lang="scss">
 
-</style>

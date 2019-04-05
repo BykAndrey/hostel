@@ -4,12 +4,17 @@ const MiniCssExractPlugin = require("mini-css-extract-plugin");
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 module.exports = {
+	watch:true,
+	watchOptions: {
+		aggregateTimeout: 100,
+		poll: 300
+	  },
 	entry: {
-		app: './src/js/index.js',
-		admin: './src/js/admin.js'
+		app: './src/public/js/index.js',
+		admin: './src/public/js/admin.js'
 	},
 	output: {
-		filename: './assets/js/[name].bundle.js',
+		filename: './public/js/[name].bundle.js',
 		path: path.resolve(__dirname, 'dist'),
 	},
 	module: {
@@ -22,7 +27,7 @@ module.exports = {
 						options: {
 							name: '[name].[ext]',
 							publicPath: '../img/',
-							outputPath: './assets/img'
+							outputPath: './public/img'
 						}
 					}
 				]
@@ -74,10 +79,11 @@ module.exports = {
 			}
 		]
 	},
+	devtool: 'eval-source-map',
 	plugins: [
 		new VueLoaderPlugin(),
 		new MiniCssExractPlugin({
-			filename: './assets/css/[name].css'
+			filename: './public/css/[name].css'
 		}),
 		new HtmlWebpackPlugin({
 			chunks: ['app'],

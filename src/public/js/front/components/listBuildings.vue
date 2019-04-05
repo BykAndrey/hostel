@@ -2,53 +2,59 @@
         div()
             b countItems:{{countItems}}
             building(v-for="item in list" :el="item")
-            pag(v-bind:total_count="countItems", size="1", v-on:changepage="loadPage")
+            pag(v-bind:total_count="countItems", v-bind:size="size", v-on:changepage="changePage")
 </template>
 <script>
-import axios from 'axios';
-import building from './Building.vue';
-import pag from "./../../common/pag.vue"
+import axios from "axios";
+import building from "./Building.vue";
+import pag from "./../../common/pag.vue";
 export default {
-    name:'listbuild',
-    data(){
-        return {
-            list:[],
-            countItems:5,
+  name: "listbuild",
+  data() {
+    return {
+      list: [],
+      countItems: 5,
+      currentPage: 1,
+      size:3,
+    };
+  },
+  components: {
+    building,
+    pag
+  },
+  created() {
+    this.loadPage();
+  },
+
+  methods: {
+    loadPage() {
+        var self = this;
+
+      axios({
+        method: "get",
+        url: self.$store.state.server + "/api/building",
+        headers: {
+          "Content-type": "application/json"
+        },
+        params: {
+          size: self.size,
+          page: self.currentPage
         }
-    },
-    components:{
-        building,
-        pag
-    },
-    created(){
-         var self=this;
-         console.log(this);
-         console.log(self);
-         axios({
-             method:'get',
-            url:self.$store.state.server+'/api/building',
-           headers: {
-                        "Content-type": "application/json"
-                    },
-            params:{
-                size:1,
-                page:1,
-            }
-        }).then(function(data){
-
-             self.list=data.data.data;
-            self.countItems=data.data.count;
-            console.log("self.countItems:"+self.countItems)
-        }).catch(function(e){
-
-            console.error(e);
+      })
+        .then(function(data) {
+          self.list = data.data.data;
+          self.countItems = data.data.count;
+          console.log("self.countItems:" + self.countItems);
         })
+        .catch(function(e) {
+          console.error(e);
+        });
     },
-   
-    methods:{
-        loadPage(e,page){
-
-        }
+    changePage(page, e) {
+      this.currentPage = page >= 0 ? page : 1;
+      console.log(`currentPage: ${this.currentPage}`)
+      this.loadPage();
     }
-}
+  }
+};
 </script>

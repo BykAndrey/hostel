@@ -21,6 +21,7 @@ app.use(bodyParser.json({ strict: false}))
 app.use(bodyParser.urlencoded({ extended: true }))
 
 app.use(express.static(path.join(__dirname, '/dist')))
+app.use('/images',express.static(path.join(__dirname, '/images')))
 let db=undefined;
 
 /*

@@ -19,6 +19,9 @@ Vue.use(VueRouter);
 import store from './front/Store.js';
 const app=new Vue({
     el:"#app",
+    created(){
+       
+    },
     router,
     store,
     render:h=>h(App)

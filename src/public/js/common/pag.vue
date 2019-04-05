@@ -1,6 +1,6 @@
 <template lang="pug">
     .pag
-        a.pag__item(v-for="i of countPage",v-on:click="click($event,i )",href="#") {{i}}
+        a.pag__item(v-for="i of countPage",v-on:click="click(i,$event )",href="#") {{i}}
         
 
 </template>
@@ -15,7 +15,9 @@ export default {
     },
     watch:{
         total_count(){
-            this.total_count=this.total_count===undefined?0:this.total_count;
+            console.log(`totalCount:${this.total_count}`)
+            console.log(`size:${this.size}`)
+            this.total_count=this.total_count===undefined?1:this.total_count;
             var a= Math.ceil(parseInt(this.total_count)/parseInt(this.size));
             this.countPage=a
         }
@@ -24,8 +26,9 @@ export default {
         calcPage(){
 
         },
-        click(ev,i){
+        click(i,ev){
             ev.preventDefault();
+            console.log(i);
             this.$emit('changepage',i);
         }
     }
