@@ -20,7 +20,7 @@ class AuthController{
     }
     login(req,res){
         console.log('Route:login')
-        
+        //edit
         res.header("Access-Control-Allow-Origin", '*');
         console.log(req.body)
     
