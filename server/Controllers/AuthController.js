@@ -12,6 +12,7 @@ class AuthController{
         console.log('===currentUser')
         console.log(req.session.user)
         console.log('===/currentUser')
+        //2
         var user={
             id:req.session.user_id,
             user:req.session.user
