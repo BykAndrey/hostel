@@ -3,8 +3,24 @@
 		fieldset
 			legend Базавые данные {{id}}
 			label
+				b Название
+				input(type="text",v-model="title")
+			label
+				b Продать
+				input(type="radio" value="sale" v-model="sale" name="type" checked)
+			label
+				b Сдать
+				input(type="radio"	value="rent" v-model="sale" name="type")
+			label
+				b Количество комнат
+				input(type="number" v-model="countroom")
+			label
 				b Улица
 				input(type="text",v-model="address")
+			label
+				b price
+				input(type="text",v-model="price")
+				
 			label
 				b Кордината 1
 				input(type="text",v-model="cord1")
@@ -14,6 +30,11 @@
 			label
 				b Описание
 				textarea(v-model="desc")
+			label
+				b Метро
+				select(v-model="metro")
+					option(value="no") Метро нет
+					option(v-for="item in metroList" :value="item.name") {{item.name}}
 			button(v-if="id==undefined" v-on:click="baseCreate") Создать
 			button(v-else v-on:click="baseEdit") Редактировать
 		fieldset(v-if="id!==undefined")
@@ -29,13 +50,30 @@ export default {
 	props:['id'],
 	data(){
 		return {
-		
+			metroList:[
+				{	
+					id:1,
+					name:"Уруручье",
+					val:false,
+				},
+				{
+					id:2,
+					name:'Московкая',
+					val:false,
+				}
+			],
+
 			created:false,
+			title:'',
 			address:'',
 			cord1:0,
 			cord2:0,
+			price:0,
 			desc:'',
 			photo:[],
+			sale:"sale",
+			countroom:0,
+			metro:'no',
 			file:undefined,
 		}
 	},
@@ -48,14 +86,13 @@ export default {
 			
 			}).then(function({data}){
 				var {address,chords,desc,photo} = data;
-				console.log(address)
 				self.address=address;
 				self.desc=desc;
+				self.price=price;
 				if(chords!=undefined){
 					self.cord1=chords[0];
 					self.cord2=chords[1];
 				}
-				
 				self.photo=photo;
 			})
 		}
@@ -64,37 +101,41 @@ export default {
 	methods:{
 		fileChange(e){
 			this.file=e.target.files || e.dataTransfer.files;
-			console.log(this.file)
 		},
 		baseCreate(){
 			let self=this;
-			axios({
-				url: self.$store.state.server + "/api/building/create",
+			let data={
+					title:this.title,
+					address:this.address,
+					desc:this.desc,
+					cord1:this.cord1,
+					cord2:this.cord2,
+					price:this.price,
+					countroom:this.countroom,
+					type:this.sale,
+					metro:this.metro
+				}
+				console.log(data)
+		/*	axios({
+				url: this.$store.state.server + "/api/building/create",
 				method:'post',
-				data:{
-					address:self.address,
-					desc:self.desc,
-					cord1:self.cord1,
-					cord2:self.cord2,
-				}
+				data:data
 			})
-			.then(function({data}){
-				console.log(data);
+			.then(({data})=>{
 				if(data.id!==undefined){
-					self.id=data._id;
+					this.id=data._id;
 				}
-			})
+			})*/
 		},
 		baseEdit(){
 
 		},
 		addImage(){
 			let self=this;
-			console.log(self.file);
 			let formData =new FormData();
 			formData.append('image', this.file[0]);
 			formData.append('id', this.id);
-			console.log(formData)
+
 			axios.post(self.$store.state.server + "/api/building/upload-image",
 			formData,
 			{

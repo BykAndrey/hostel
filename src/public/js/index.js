@@ -6,7 +6,12 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import VueRouter from 'vue-router';
 
+import VueAwesomeSwiper from 'vue-awesome-swiper'
 
+// require styles
+import 'swiper/dist/css/swiper.css'
+
+Vue.use(VueAwesomeSwiper, /* { default global options } */)
 
 import router from './front/Router.js';
 

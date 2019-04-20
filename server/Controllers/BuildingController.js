@@ -67,6 +67,8 @@ class Building {
             desc: req.body.desc,
             chords: [req.body.cord1, req.body.cord2],
             photo: req.body.photo,
+            price:req.body.price!=null||req.body.price!==undefined?req.boby.price:0,
+            
         })
         b.save(function (er) {
             if (er) {
