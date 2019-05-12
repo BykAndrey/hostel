@@ -1,28 +1,27 @@
-const express=require('express');
-const fs=require('fs');
-const path=require('path');
+const express = require("express");
+const fs = require("fs");
+const path = require("path");
 //const MongoClient=require('mongodb').MongoClient;
-const mongoose=require('mongoose');
-const session = require('express-session')
+const mongoose = require("mongoose");
+const session = require("express-session");
 
-var bodyParser = require('body-parser');
+var bodyParser = require("body-parser");
 
-const app=express();
-app.use(session({
-    secret:"hotel"
-}))
-
-
-
+const app = express();
+app.use(
+  session({
+    secret: "hotel"
+  })
+);
 
 // parse application/json
 
-app.use(bodyParser.json({ strict: false}))
-app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.json({ strict: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(express.static(path.join(__dirname, '/dist')))
-app.use('/images',express.static(path.join(__dirname, '/images')))
-let db=undefined;
+app.use(express.static(path.join(__dirname, "/dist")));
+app.use("/static", express.static(path.join(__dirname, "/static")));
+let db = undefined;
 
 /*
 const mongoClient=new MongoClient('mongodb://localhost:27017/',{useNewUrlParser:true});
@@ -35,17 +34,19 @@ mongoClient.connect(function(er,client){
     client.close();
 });
 */
-mongoose.connect('mongodb://localhost:27017/hotel',{useNewUrlParser:true},function(er){
-    if(er){
-        return console.log(er)
+mongoose.connect(
+  "mongodb://localhost:27017/hotel",
+  { useNewUrlParser: true },
+  function(er) {
+    if (er) {
+      return console.log(er);
     }
     //db=client;
     app.listen(3000);
-});
+  }
+);
 
-
-const router=require('./server/Router.js');
-
+const router = require("./server/Router.js");
 
 router(app);
 /*

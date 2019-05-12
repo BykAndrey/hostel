@@ -1,7 +1,7 @@
 <template lang="pug">
         div()
-            b countItems:{{countItems}}
-            building(v-for="item in list" :el="item")
+            .list
+              building(v-for="item in list" :el="item")
             pag(v-bind:total_count="countItems", v-bind:size="size", v-on:changepage="changePage")
 </template>
 <script>
@@ -15,7 +15,7 @@ export default {
       list: [],
       countItems: 5,
       currentPage: 1,
-      size:3,
+      size: 3
     };
   },
   components: {
@@ -28,7 +28,7 @@ export default {
 
   methods: {
     loadPage() {
-        var self = this;
+      var self = this;
 
       axios({
         method: "get",
@@ -52,9 +52,16 @@ export default {
     },
     changePage(page, e) {
       this.currentPage = page >= 0 ? page : 1;
-      console.log(`currentPage: ${this.currentPage}`)
+      console.log(`currentPage: ${this.currentPage}`);
       this.loadPage();
     }
   }
 };
 </script>
+<style lang="scss" scoped>
+.list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+</style>
