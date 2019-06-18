@@ -23,7 +23,8 @@ class City {
       name: req.body.name,
       country_id: req.body.country_id,
       metro: metro,
-      level: parseInt(req.body.level)
+      level: parseInt(req.body.level),
+      osme: req.body.osme
     });
     el.save();
     res.send(el);
@@ -77,6 +78,9 @@ class City {
     }
     if (req.body.level) {
       data.level = parseInt(req.body.level);
+    }
+    if (req.body.osme) {
+      data.osme = req.body.osme;
     }
     if (!req.params.id) {
       return res.send("no");

@@ -7,7 +7,8 @@ const City = new Schema(
     name: String,
     country_id: String,
     metro: Array,
-    level: Number
+    level: Number,
+    osme: String
   },
   {
     timestamps: true

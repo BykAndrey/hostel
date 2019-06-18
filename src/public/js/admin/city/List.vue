@@ -4,6 +4,7 @@
           select(v-model="editEl.country_id" placeholder="Страна")
             option(v-for="item in countries" :key="item.id" :value="item._id") {{ item.name }}
           input.create(v-model="editEl.name" placeholder="Название города")
+          input.create(v-model="editEl.osme" placeholder="OSME")
           .create__type
             label
               input(type="radio" name="level" value="100" v-model="editEl.level")
@@ -42,7 +43,8 @@ export default {
         country_id: "",
         name: "",
         level: 200,
-        metro: []
+        metro: [],
+        osme:""
       },
       newmetro: "",
       list: [],
@@ -97,6 +99,7 @@ export default {
         this.editEl._id = null;
         this.editEl.name = "";
         this.editEl.metro = [];
+        this.editEl.osme = "";
         this.reloadList();
       });
     },

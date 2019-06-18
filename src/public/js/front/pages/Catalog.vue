@@ -8,6 +8,33 @@
 					label
 						input(type="checkbox" v-model="onMap")
 						span Списком
+					.aside__title Страна
+					.aside__box
+						select(v-model="countryId" placeholder= "Страна")
+							option( value="all") Все
+							option(v-for="country in countriesList" :value="country._id") {{ country.name }}
+
+					.aside__title(v-if="countryId && countryId!=='all'") Город
+					.aside__box(v-if="countryId && countryId!=='all'")
+						select(v-model="cityId" placeholder= "Город")
+							option( value="all") Все
+							option(v-for="city in cityCountry" :value="city._id") {{ city.name }}
+					.aside__box()
+						select(placeholder= "Город")
+							option( value="all") Все
+							option(v-for="reg in regionsList" :value="reg.properties.osmId") {{ reg.properties.name }}
+
+					.aside__title(v-if="cityId && cityId !=='all' && metro") Метро
+					.aside__box(v-if="cityId && cityId !=='all' && metro")
+						select(v-model="currentmetro")
+							option( value="all") Все
+							option(v-for="(station, i) in metro" :key="i" :value="station") {{station}}
+
+					.aside__title Цена
+					.aside__box
+						.price
+							input(type="number" placeholder="Минимальная цена" v-model="minprice")
+							input(type="number" placeholder="Максимальная цена" v-model="maxprice")
 					.aside__title Тип строения	
 					.aside__box
 						radio(v-model="houseType" :name="'type'" val="all" title="Все")
@@ -26,32 +53,10 @@
 						radio(v-model="countRoom" :name="'countRoom'" val="2" title="2")
 						radio(v-model="countRoom" :name="'countRoom'" val="3" title="3")
 						radio(v-model="countRoom" :name="'countRoom'" val="more4" title="4+")
-					.aside__title Страна
-					.aside__box
-						select(v-model="countryId" placeholder= "Страна")
-							option( value="all") Все
-							option(v-for="country in countriesList" :value="country._id") {{ country.name }}
-
-					.aside__title(v-if="countryId && countryId!=='all'") Город
-					.aside__box(v-if="countryId && countryId!=='all'")
-						select(v-model="cityId" placeholder= "Город")
-							option( value="all") Все
-							option(v-for="city in cityCountry" :value="city._id") {{ city.name }}
-
-					.aside__title(v-if="cityId && cityId !=='all' && metro") Метро
-					.aside__box(v-if="cityId && cityId !=='all' && metro")
-						select(v-model="currentmetro")
-							option( value="all") Все
-							option(v-for="(station, i) in metro" :key="i" :value="station") {{station}}
-
-					.aside__title Цена
-					.aside__box
-						.price
-							input(type="number" placeholder="Минимальная цена" v-model="minprice")
-							input(type="number" placeholder="Максимальная цена" v-model="maxprice")
+					
 				
 			.p-catalog__items
-				Map(:class="!onMap?'map--map':''" :value="[[0,0]]" :builds="items" v-if="!onMap" keep-alive)
+				Map(:class="!onMap?'map--map':''" :value="[[0,0]]" :builds="items" v-if="!onMap"  keep-alive)
 				listBuildings(v-if="onMap" :list="items")
 </template>
 <script>
@@ -60,7 +65,7 @@ import building from "../components/Building.vue";
 import listBuildings from "../components/listBuildings.vue";
 import Map from "../components/map.vue";
 import radio from "../components/radio.vue";
-import metro from "../../help/metro.json";
+import osme from "osme";
 export default {
   name: "catalog",
   components: {
@@ -85,7 +90,8 @@ export default {
       maxprice: 0,
       dealType: "all",
       houseType: "all",
-      countRoom: "all"
+      countRoom: "all",
+      regionsList: []
     };
   },
 
@@ -153,6 +159,12 @@ export default {
         return el._id === this.cityId;
       })[0];
       return data ? data.metro : null;
+    },
+    currentCity() {
+      let data = this.citiesList.filter(el => {
+        return el._id === this.cityId;
+      })[0];
+      return data;
     }
   },
   watch: {
@@ -171,6 +183,9 @@ export default {
       if (val == "all") {
         this.currentmetro = "all";
       }
+    },
+    currentCity() {
+      this.regions(this.currentCity ? this.currentCity.osme : null);
     }
   },
   methods: {
@@ -222,6 +237,15 @@ export default {
         } else {
           return el.countroom >= 4;
         }
+      });
+    },
+    regions(osmeID) {
+      osme.geoJSON(osmeID, { lang: "ru" }, data => {
+        this.regionsList = data.features;
+        /* this.$emit("regions",data);
+        var yandexGeoObjectColletionWrapper = osme.toYandex(data);
+        console.log(data);
+        yandexGeoObjectColletionWrapper.add(this.map);*/
       });
     }
   }

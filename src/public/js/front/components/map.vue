@@ -6,7 +6,7 @@
 import { Promise } from "q";
 import osme from "osme";
 export default {
-  props: ["value", "builds", "address"],
+  props: ["value", "builds", "address", "osme"],
   data() {
     return {
       scriptLoaded: false,
@@ -27,6 +27,12 @@ export default {
     },
     addressComp() {
       return this.address;
+    },
+    osmeComp() {
+      if (this.osme) {
+        return this.osme;
+      }
+      return null;
     }
   },
   watch: {
@@ -44,6 +50,9 @@ export default {
     },
     items() {
       this.setPoints();
+    },
+    osmeComp() {
+      this.OSME();
     }
   },
   created() {
@@ -72,11 +81,7 @@ export default {
             searchControlProvider: "yandex#search"
           }
         );
-        osme.geoJSON("59252", { lang: "ru" }, data => {
-          var yandexGeoObjectColletionWrapper = osme.toYandex(data);
-          console.log(data);
-          yandexGeoObjectColletionWrapper.add(this.map);
-        });
+
         console.log(this.addressComp);
         if (true) {
           console.log(this.addressComp);
@@ -149,7 +154,8 @@ export default {
           this.map.geoObjects.add(myPlacemark);
         });
       }
-    }
+    },
+    OSME() {}
   }
 };
 </script>
