@@ -5,7 +5,16 @@ const Schema = mongoose.Schema;
 const Building = new Schema(
   {
     user_id: {
-      type: String
+      type: Schema.Types.ObjectId,
+      ref: "User"
+    },
+    country_id: {
+      type: Schema.Types.ObjectId,
+      ref: "Countries"
+    },
+    city_id: {
+      type: Schema.Types.ObjectId,
+      ref: "City"
     },
     price: Number,
     title: String,

@@ -11,15 +11,16 @@ class Building {
 
   getOne(req, res) {
     console.log(req.params.id);
-    BuildingModel.findOne(
-      {
-        _id: req.params.id
-      },
-      function(er, data) {
+    BuildingModel.findOne({
+      _id: req.params.id
+    })
+      .populate("user_id")
+      .populate("country_id")
+      .populate("city_id")
+      .exec(function(er, data) {
         if (er) return res.status(404).send("Not Found");
         return res.status(200).send(data);
-      }
-    );
+      });
   }
 
   getList(req, res) {
@@ -28,6 +29,9 @@ class Building {
     var skip = (page - 1) * size;
 
     BuildingModel.find({})
+      .populate("user_id")
+      .populate("country_id")
+      .populate("city_id")
       .skip(skip)
       .limit(size)
       .exec(function(error, data) {
@@ -70,7 +74,9 @@ class Building {
       metro: req.body.metro,
       views: 0,
       active: false,
-      countroom: req.body.countroom
+      countroom: req.body.countroom,
+      country_id: req.body.country_id,
+      city_id: req.body.city_id
     };
 
     var b = new BuildingModel(data);
@@ -178,7 +184,9 @@ class Building {
       metro: req.body.metro,
       views: req.body.views,
       active: req.body.active,
-      countroom: req.body.countroom
+      countroom: req.body.countroom,
+      country_id: req.body.country_id,
+      city_id: req.body.city_id
     };
 
     BuildingModel.update({ _id: req.body._id }, { $set: data }, function(

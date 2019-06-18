@@ -15,54 +15,78 @@
 				select(v-model="type")
 					option(value="apartament") Квартира
 					option(value="room") Комната
+					option(value="house") Дом
 			label
 				b Количество комнат
 				input(type="number" v-model="countroom")
 			label
-				b Улица
+				b Страна
+				select(v-model="country_id")
+					option(v-for="item in countriesList" :key="item._id" :value="item._id") {{ item.name }}
+			label(v-if="country_id")
+				b Населенный пункт
+				select(v-model="city_id")
+					option(v-for="item in cityCountry" :key="item._id" :value="item._id") {{ item.name }}
+			label(v-if="city_id")
+				b Метро
+				select(v-model="metro" multiple)
+					//option(value="no") Метро нет
+					option(v-for="item in metroList" :value="item") {{item}}
+			label
+				b Улица <br> (если в списке нет нужного населенного пунка, то его нужно написать здесь)
 				input(type="text",v-model="address")
 			label
-				b price
+				b Цена
 				input(type="text",v-model="price")
-				
-			label
-				b Кордината 1
-				input(type="text",v-model="cord1")
-			label
-				b Кордината 2
-				input(type="text",v-model="cord2")
+			check(v-model="coordsFlag") Установить координаты в ручную
+			fieldset.coordinates(v-if="coordsFlag")
+				legend Координаты
+
+				label
+					b Кордината 1
+					input(type="text",v-model="cord1")
+				label
+					b Кордината 2
+					input(type="text",v-model="cord2")
 			label
 				b Описание
 				textarea(v-model="desc")
-			label
-				b Метро
-				b 1{{metro}}2
-				select(v-model="metro" multiple)
-					option(value="no") Метро нет
-					option(v-for="item in metroList" :value="item.name") {{item.name}}
+			
 			label
 				b active
 				input( type="checkbox" v-model="active")
-			button(v-if="id==undefined" v-on:click="baseCreate") Создать
-			button(v-else v-on:click="baseEdit") Редактировать
+			button.c-btn(v-if="id==undefined" v-on:click="baseCreate") Создать
+			button.c-btn(v-else v-on:click="baseEdit") Редактировать
+			p {{countyName}} {{CityName}}
+			Map(:address = "countyName + ' ' + CityName + ' ' + address" @coords="getCoords")
 		fieldset(v-if="id!==undefined")
 			legend Изображения
 			template(v-for="(item,i) in photo")
-
 				img(:src="item.url", width="100px" @click="removeImage(item._id)")
 			input(type="file",v-on:change="fileChange")
-			button(v-on:click="addImage") Загрузить
+			button.c-btn(v-on:click="addImage") Загрузить
 </template>
 <script>
 import axios from "axios";
 import metro from "../../help/metro.json";
+import Map from "../components/map.vue";
+import check from "../components/check.vue";
 console.log(metro);
 export default {
-  props: ["id"],
+  props: ["value"],
+  components: {
+    Map,
+    check
+  },
   data() {
     return {
+      countriesList: [],
+      allCity: [],
+      cityCountry: [],
       metroList: metro,
-      id: -1,
+      id: undefined,
+      country_id: "",
+      city_id: "",
       created: false,
       title: "",
       address: "",
@@ -74,16 +98,44 @@ export default {
       type_deal: "sale",
       type: "apartament",
       countroom: 0,
-      metro: "no",
+      metro: [],
       views: 0,
-      file: undefined
+      active: false,
+      file: undefined,
+      coordsFlag: false
     };
+  },
+  computed: {
+    countyName() {
+      let country = this.countriesList.filter(el => {
+        return el._id === this.country_id;
+      })[0];
+      return country ? country.name : "";
+    },
+    CityName() {
+      let country = this.cityCountry.filter(el => {
+        return el._id === this.city_id;
+      })[0];
+      return country ? country.name : "";
+    }
+  },
+  watch: {
+    country_id() {
+      this.cityCountry = this.allCity.filter(el => {
+        return el.country_id === this.country_id;
+      });
+    },
+    city_id() {
+      this.setMetroList();
+    }
   },
   created() {
     var self = this;
-    if (this.id != undefined) {
+    this.loadCountries();
+    this.loadCity();
+    if (this.value) {
       axios({
-        url: self.$store.state.server + "/api/building/" + this.id,
+        url: self.$store.state.server + "/api/building/" + this.value,
         method: "get"
       }).then(({ data }) => {
         var {
@@ -99,8 +151,12 @@ export default {
           metro,
           active,
           views,
-          _id
+          _id,
+          country_id,
+          city_id
         } = data;
+        this.country_id = country_id._id;
+        this.city_id = city_id._id;
         this.id = _id;
         this.address = address;
         this.desc = desc;
@@ -117,11 +173,39 @@ export default {
         this.active = active;
         this.views = views;
         this.photo = photo;
+        this.setMetroList();
       });
     }
   },
 
   methods: {
+    loadCountries() {
+      console.log("loadCountries");
+      axios({
+        url: this.$store.state.server + `/api/countries`
+      })
+        .then(({ data }) => {
+          this.countriesList = data;
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    },
+    loadCity() {
+      axios({
+        url: this.$store.state.server + `/api/city`
+      }).then(({ data }) => {
+        this.allCity = data;
+        this.cityCountry = data;
+      });
+    },
+    setMetroList() {
+      let m = this.allCity.filter(el => {
+        return el._id === this.city_id;
+      })[0];
+      console.log(m);
+      this.metroList = m ? m.metro : [];
+    },
     fileChange(e) {
       this.file = e.target.files || e.dataTransfer.files;
     },
@@ -137,7 +221,9 @@ export default {
         countroom: this.countroom,
         type_deal: this.type_deal,
         type: this.type,
-        metro: this.metro
+        metro: this.metro,
+        country_id: this.country_id,
+        city_id: this.city_id
       };
       console.log(data);
       axios({
@@ -145,12 +231,16 @@ export default {
         method: "post",
         data: data
       }).then(({ data }) => {
-        if (data.id !== undefined) {
+        if (data._id !== undefined) {
           this.id = data._id;
+          this.$router.push(`/${data._id}/edit`);
         }
       });
     },
     async baseEdit() {
+      if (this.country_id == "" || this.city_id == "") {
+        return false;
+      }
       let data = {
         _id: this.id,
         title: this.title,
@@ -165,7 +255,9 @@ export default {
         metro: this.metro,
         views: this.views,
         active: this.active,
-        photo: this.photo
+        photo: this.photo,
+        country_id: this.country_id,
+        city_id: this.city_id
       };
       await axios({
         method: "post",
@@ -206,6 +298,15 @@ export default {
       }).then(({ data }) => {
         this.photo = data;
       });
+    },
+    getCoords(val) {
+      console.log("getCoords");
+      console.log(val);
+
+      this.cord1 = val[0];
+      this.cord2 = val[1];
+      console.log(this.cord1);
+      console.log("getCoords end");
     }
   }
 };
@@ -227,5 +328,8 @@ textarea {
   width: 100%;
   min-height: 40px;
   padding: 10px;
+}
+.coordinates {
+  margin: 20px 0;
 }
 </style>

@@ -1,8 +1,8 @@
 <template lang="pug">
-        div()
-            .list
-              building(v-for="item in list" :el="item")
-            pag(v-bind:total_count="countItems", v-bind:size="size", v-on:changepage="changePage")
+	div()
+		.list
+			building(v-for="item in list" :el="item")
+		pag(v-bind:total_count="countItems", v-bind:size="size", v-on:changepage="changePage")
 </template>
 <script>
 import axios from "axios";
@@ -10,6 +10,7 @@ import building from "./Building.vue";
 import pag from "./../../common/pag.vue";
 export default {
   name: "listbuild",
+  props: ["list"],
   data() {
     return {
       list: [],
@@ -30,7 +31,7 @@ export default {
     loadPage() {
       var self = this;
 
-      axios({
+      /* axios({
         method: "get",
         url: self.$store.state.server + "/api/building",
         headers: {
@@ -48,7 +49,7 @@ export default {
         })
         .catch(function(e) {
           console.error(e);
-        });
+        });*/
     },
     changePage(page, e) {
       this.currentPage = page >= 0 ? page : 1;
