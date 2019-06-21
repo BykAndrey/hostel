@@ -19,9 +19,10 @@
 						select(v-model="cityId" placeholder= "Город")
 							option( value="all") Все
 							option(v-for="city in cityCountry" :value="city._id") {{ city.name }}
-					.aside__box()
-						p {{ currentRegionId }}
-						select(v-model="currentRegionId" placeholder= "Город")
+					
+					.aside__title(v-if="cityId!=='all'&&!onMap") Сектор
+					.aside__box(v-if="cityId!=='all'&&!onMap")
+						select(v-model="currentRegionId" placeholder= "Район")
 							option( value="all") Все
 							option(v-for="reg in regionsList" :value="reg.properties.osmId") {{ reg.properties.name }}
 
@@ -57,7 +58,7 @@
 					
 				
 			.p-catalog__items
-				Map(:class="!onMap?'map--map':''" :value="[[0,0]]" :builds="items" v-if="!onMap"  keep-alive)
+				Map(:class="!onMap?'map--map':''" :value="[[0,0]]" :builds="items" v-if="!onMap" :polygon="currentRegion"  keep-alive)
 				listBuildings(v-if="onMap" :list="items")
 </template>
 <script>
@@ -93,8 +94,7 @@ export default {
       houseType: "all",
       countRoom: "all",
       regionsList: [],
-      currentRegionId: "all",
-      currentRegion: null
+      currentRegionId: "all"
     };
   },
 
@@ -168,6 +168,12 @@ export default {
         return el._id === this.cityId;
       })[0];
       return data;
+    },
+    currentRegion() {
+      let polygon = this.regionsList.filter(r => {
+        return r.properties.osmId === this.currentRegionId;
+      })[0];
+      return polygon ? polygon : null;
     }
   },
   watch: {
@@ -178,13 +184,20 @@ export default {
       this.maxprice = +val;
     },
     countryId(val) {
-      if (val == "all") {
-        this.cityId = "all";
-      }
+      this.currentRegionId = null;
+      this.cityId = "all";
     },
     cityId(val) {
-      if (val == "all") {
-        this.currentmetro = "all";
+      this.currentmetro = "all";
+      if (this.cityId == "all") {
+        this.currentRegionId = null;
+      }
+    },
+    regionsList() {
+      console.log("length", this.regionsList.length);
+      if (this.regionsList.length > 0) {
+        console.log("Change city");
+        this.currentRegionId = this.regionsList[0].properties.osmId;
       }
     },
     currentCity() {
@@ -244,6 +257,7 @@ export default {
     },
     regions(osmeID) {
       osme.geoJSON(osmeID, { lang: "ru" }, data => {
+        console.log(data.features);
         this.regionsList = data.features;
       });
     }

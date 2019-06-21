@@ -6,7 +6,7 @@
 import { Promise } from "q";
 import osme from "osme";
 export default {
-  props: ["value", "builds", "address", "osme"],
+  props: ["value", "builds", "address", "osme", "polygon"],
   data() {
     return {
       scriptLoaded: false,
@@ -53,6 +53,9 @@ export default {
     },
     osmeComp() {
       this.OSME();
+    },
+    polygon() {
+      this.setPoints();
     }
   },
   created() {
@@ -161,6 +164,33 @@ export default {
         });
         let objects = this.ymaps.geoQuery(elem);
         objects.addToMap(this.map);
+        if (this.polygon) {
+          console.log("I have polygin", this.polygon);
+          let Mascoords = this.polygon.geometry.coordinates;
+          Mascoords.forEach(polCorr => {
+            let coords = polCorr;
+            /**Разварот координат */
+            coords = coords.map(el => {
+              return [el[1], el[0]];
+            });
+            let pol = new this.ymaps.Polygon(
+              [coords, 1000],
+              {
+                hintContent: this.polygon.properties.name
+              },
+              {
+                fillColor: "#6699ff",
+                // Делаем полигон прозрачным для событий карты.
+                interactivityModel: "default#transparent",
+                strokeWidth: 1,
+                opacity: 0.4
+                //draggable: true
+              }
+            );
+            console.log(pol);
+            this.map.geoObjects.add(pol);
+          });
+        }
       }
     },
     OSME() {}
