@@ -149,10 +149,18 @@ export default {
     setPoints() {
       if (this.items) {
         this.map.geoObjects.removeAll();
-        this.items.forEach(e => {
+        /*this.items.forEach(e => {
           var myPlacemark = new ymaps.Placemark(e.chords, {}, {});
           this.map.geoObjects.add(myPlacemark);
+        });*/
+        let elem = this.items.map(e => {
+          return {
+            type: "Point",
+            coordinates: e.chords
+          };
         });
+        let objects = this.ymaps.geoQuery(elem);
+        objects.addToMap(this.map);
       }
     },
     OSME() {}

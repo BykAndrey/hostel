@@ -20,7 +20,8 @@
 							option( value="all") Все
 							option(v-for="city in cityCountry" :value="city._id") {{ city.name }}
 					.aside__box()
-						select(placeholder= "Город")
+						p {{ currentRegionId }}
+						select(v-model="currentRegionId" placeholder= "Город")
 							option( value="all") Все
 							option(v-for="reg in regionsList" :value="reg.properties.osmId") {{ reg.properties.name }}
 
@@ -91,7 +92,9 @@ export default {
       dealType: "all",
       houseType: "all",
       countRoom: "all",
-      regionsList: []
+      regionsList: [],
+      currentRegionId: "all",
+      currentRegion: null
     };
   },
 
@@ -242,10 +245,6 @@ export default {
     regions(osmeID) {
       osme.geoJSON(osmeID, { lang: "ru" }, data => {
         this.regionsList = data.features;
-        /* this.$emit("regions",data);
-        var yandexGeoObjectColletionWrapper = osme.toYandex(data);
-        console.log(data);
-        yandexGeoObjectColletionWrapper.add(this.map);*/
       });
     }
   }
