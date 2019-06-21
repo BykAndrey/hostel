@@ -194,9 +194,7 @@ export default {
       }
     },
     regionsList() {
-      console.log("length", this.regionsList.length);
       if (this.regionsList.length > 0) {
-        console.log("Change city");
         this.currentRegionId = this.regionsList[0].properties.osmId;
       }
     },
@@ -231,7 +229,6 @@ export default {
         return list;
       } else {
         return list.filter(e => {
-          console.log(e.metro.indexOf(this.currentmetro));
           return e.metro.indexOf(this.currentmetro) !== -1 ? true : false;
         });
       }
@@ -257,7 +254,6 @@ export default {
     },
     regions(osmeID) {
       osme.geoJSON(osmeID, { lang: "ru" }, data => {
-        console.log(data.features);
         this.regionsList = data.features;
       });
     }

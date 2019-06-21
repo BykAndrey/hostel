@@ -105,27 +105,19 @@ export default {
   },
   methods: {
     setPoint(c) {
-      console.log(1);
       this.map.geoObjects.removeAll();
       this.map.setCenter(c);
       this.map.setZoom(17);
-      console.log(2);
       var myPlacemark = new this.ymaps.Placemark(c, {}, {});
       this.map.geoObjects.add(myPlacemark);
-      console.log("create");
     },
     getCoordinates() {
       return new Promise((resolve, rej) => {
-        console.log(this.ymaps);
         if (this.ymaps) {
           let coords = this.ymaps.geocode(this.addressComp);
           coords.then(
             res => {
-              console.log(
-                res.geoObjects.get(0).properties.get("metaDataProperty")
-              );
               let val = res.geoObjects.get(0).geometry.getCoordinates();
-              console.log("getCoordinates2", val);
               resolve(val);
             },
             err => {
@@ -146,7 +138,7 @@ export default {
           this.setPoint(c);
         })
         .catch(e => {
-          console.log(e);
+          console.error(e);
         });
     },
     setPoints() {
@@ -165,7 +157,6 @@ export default {
         let objects = this.ymaps.geoQuery(elem);
         objects.addToMap(this.map);
         if (this.polygon) {
-          console.log("I have polygin", this.polygon);
           let Mascoords = this.polygon.geometry.coordinates;
           Mascoords.forEach(polCorr => {
             let coords = polCorr;
@@ -187,7 +178,6 @@ export default {
                 //draggable: true
               }
             );
-            console.log(pol);
             this.map.geoObjects.add(pol);
           });
         }
