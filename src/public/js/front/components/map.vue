@@ -155,9 +155,10 @@ export default {
           };
         });
         let objects = this.ymaps.geoQuery(elem);
-        objects.addToMap(this.map);
+        //objects.addToMap(this.map);
         if (this.polygon) {
           let Mascoords = this.polygon.geometry.coordinates;
+          let ListPolygons = [];
           Mascoords.forEach(polCorr => {
             let coords = polCorr;
             /**Разварот координат */
@@ -178,8 +179,16 @@ export default {
                 //draggable: true
               }
             );
+            ListPolygons.push(pol);
             this.map.geoObjects.add(pol);
           });
+          console.log("Полигоны = ", ListPolygons.length);
+          ListPolygons.forEach(pol => {
+            let inPol = objects.searchInside(pol);
+            inPol.addToMap(this.map);
+          });
+        } else {
+          objects.addToMap(this.map);
         }
       }
     },
