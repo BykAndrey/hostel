@@ -147,7 +147,26 @@ export default {
         /*this.items.forEach(e => {
           var myPlacemark = new ymaps.Placemark(e.chords, {}, {});
           this.map.geoObjects.add(myPlacemark);
-        });*/
+		});*/
+        let clusterer = new this.ymaps.Clusterer({
+          /**
+           * Через кластеризатор можно указать только стили кластеров,
+           * стили для меток нужно назначать каждой метке отдельно.
+           * @see https://api.yandex.ru/maps/doc/jsapi/2.1/ref/reference/option.presetStorage.xml
+           */
+          preset: "islands#invertedVioletClusterIcons",
+          /**
+           * Ставим true, если хотим кластеризовать только точки с одинаковыми координатами.
+           */
+          groupByCoordinates: false,
+          /**
+           * Опции кластеров указываем в кластеризаторе с префиксом "cluster".
+           * @see https://api.yandex.ru/maps/doc/jsapi/2.1/ref/reference/ClusterPlacemark.xml
+           */
+          clusterDisableClickZoom: true,
+          clusterHideIconOnBalloonOpen: false,
+          geoObjectHideIconOnBalloonOpen: false
+        });
         let elem = this.items.map(e => {
           return {
             type: "Point",
@@ -185,10 +204,14 @@ export default {
           console.log("Полигоны = ", ListPolygons.length);
           ListPolygons.forEach(pol => {
             let inPol = objects.searchInside(pol);
-            inPol.addToMap(this.map);
+            this.map.geoObjects.add(
+              inPol.search('geometry.type == "Point"').clusterize()
+            );
           });
         } else {
-          objects.addToMap(this.map);
+          this.map.geoObjects.add(
+            objects.search('geometry.type == "Point"').clusterize()
+          );
         }
       }
     },
