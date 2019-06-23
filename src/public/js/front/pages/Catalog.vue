@@ -1,6 +1,6 @@
 <template lang="pug">
 	.p-catalog.container(:class="!onMap?'p-catalog--map':''")
-		h1.p-catalog__title Каталог
+		h1.p-catalog__title(v-if="onMap") Каталог
 		//list-buildings
 		.p-catalog__center
 			.aside(:class="!onMap?'aside--map':''")
@@ -117,6 +117,9 @@ export default {
       url: self.$store.state.server + "/api/countries"
     }).then(({ data }) => {
       this.countriesList = data;
+      if (this.countriesList.length > 0) {
+        this.countryId = this.countriesList[0]._id;
+      }
     });
     axios({
       url: self.$store.state.server + "/api/city"
