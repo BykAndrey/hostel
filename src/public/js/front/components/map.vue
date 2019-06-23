@@ -72,13 +72,17 @@ export default {
     document.head.appendChild(recaptchaScript);
     recaptchaScript.onload = () => {
       this.scriptLoaded = true;
+      let center = [0, 0];
+      if (this.builds && this.builds.length == 1) {
+        center = this.builds[0].chords;
+      }
       ymaps.ready(() => {
         this.ymaps = ymaps;
         this.map = new ymaps.Map(
           "map",
           {
-            center: [0, 0],
-            zoom: 1
+            center: center,
+            zoom: 5
           },
           {
             searchControlProvider: "yandex#search"
@@ -141,40 +145,66 @@ export default {
           console.error(e);
         });
     },
+
+    addEvents() {
+      let btn = document.querySelectorAll(".ballon-btn");
+
+      if (btn.length > 0) {
+        btn[0].addEventListener("click", e => {
+          e.preventDefault();
+          let _id = e.target.getAttribute("data-value");
+          this.$router.push(`/${_id}`);
+        });
+      }
+    },
     setPoints() {
       if (this.items) {
         this.map.geoObjects.removeAll();
-        /*this.items.forEach(e => {
-          var myPlacemark = new ymaps.Placemark(e.chords, {}, {});
-          this.map.geoObjects.add(myPlacemark);
-		});*/
         let clusterer = new this.ymaps.Clusterer({
-          /**
-           * Через кластеризатор можно указать только стили кластеров,
-           * стили для меток нужно назначать каждой метке отдельно.
-           * @see https://api.yandex.ru/maps/doc/jsapi/2.1/ref/reference/option.presetStorage.xml
-           */
           preset: "islands#invertedVioletClusterIcons",
-          /**
-           * Ставим true, если хотим кластеризовать только точки с одинаковыми координатами.
-           */
           groupByCoordinates: false,
-          /**
-           * Опции кластеров указываем в кластеризаторе с префиксом "cluster".
-           * @see https://api.yandex.ru/maps/doc/jsapi/2.1/ref/reference/ClusterPlacemark.xml
-           */
           clusterDisableClickZoom: true,
           clusterHideIconOnBalloonOpen: false,
           geoObjectHideIconOnBalloonOpen: false
         });
-        let elem = this.items.map(e => {
+        let elem = this.items.map((e, id) => {
+          let country = "";
+          let city = "";
+          if (e.country_id) {
+            country = e.country_id.name;
+          }
+          if (e.city_id) {
+            city = e.city_id.name;
+          }
           return {
-            type: "Point",
-            coordinates: e.chords
+            type: "Feature",
+            properties: {
+              balloonContentFooter: `${country}, ${city}`,
+              balloonContentBody: `${e.title} <b>${
+                e.price
+              }$</b> <br/> <a href="/${e._id}" data-value="${
+                e._id
+              }" class="ballon-btn"> Подробнее</a>`,
+              balloonContentHeader: `${e.title}`,
+              balloonContent: `${e.title} <b>${e.price}$</b>`,
+              hintContent: `${e.price}$`,
+              clusterCaption: `Предложение <strong>${id}</strong>`,
+              _id: e._id
+            },
+            geometry: {
+              type: "Point",
+              coordinates: e.chords
+            }
           };
         });
-        let objects = this.ymaps.geoQuery(elem);
-        //objects.addToMap(this.map);
+        let objects = this.ymaps.geoQuery({
+          type: "FeatureCollection",
+          features: elem
+        });
+        objects.addEvents(["click", "balloonopen"], e => {
+          let el = e.get("target");
+          this.addEvents();
+        });
         if (this.polygon) {
           let Mascoords = this.polygon.geometry.coordinates;
           let ListPolygons = [];
@@ -191,17 +221,14 @@ export default {
               },
               {
                 fillColor: "#6699ff",
-                // Делаем полигон прозрачным для событий карты.
                 interactivityModel: "default#transparent",
                 strokeWidth: 1,
                 opacity: 0.4
-                //draggable: true
               }
             );
             ListPolygons.push(pol);
             this.map.geoObjects.add(pol);
           });
-          console.log("Полигоны = ", ListPolygons.length);
           ListPolygons.forEach(pol => {
             let inPol = objects.searchInside(pol);
             this.map.geoObjects.add(
@@ -213,11 +240,17 @@ export default {
             objects.search('geometry.type == "Point"').clusterize()
           );
         }
+        console.log("this.map.geoObjects", this.map.geoObjects);
+        if (this.map.geoObjects) {
+          this.map.setBounds(this.map.geoObjects.getBounds());
+        }
       }
     },
     OSME() {}
   }
 };
+let a = document.querySelectorAll(".go");
+console.log(a);
 </script>
 <style lang="scss">
 #map {

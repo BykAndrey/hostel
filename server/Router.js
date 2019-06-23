@@ -7,7 +7,7 @@ const CityController = require("./Controllers/CityController.js");
 
 const bodyParser = require("body-parser");
 const urlencodedParser = bodyParser.urlencoded({ extended: false });
-
+const path = require("path");
 module.exports = function(app, db) {
   const userC = new UserController(db);
   const auth = new AuthController(db);
@@ -62,4 +62,12 @@ module.exports = function(app, db) {
 
   app.get("/api/users", userC.users.bind(userC));
   app.put("/api/users", userC.create.bind(userC));
+  app.get("/admin", function(req, res) {
+    res.sendFile(path.resolve("./dist/admin.html"));
+    // res.sendFile(__dirname + "/dist/index.html");
+  });
+  app.get("/*", function(req, res) {
+    res.sendFile(path.resolve("./dist/index.html"));
+    // res.sendFile(__dirname + "/dist/index.html");
+  });
 };
