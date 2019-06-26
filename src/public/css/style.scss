@@ -27,13 +27,15 @@ html {
 }
 .c-input {
   background: white;
-  border: 1px solid #333333;
+  border: 1px solid $color;
   font-size: 1.4em;
-  height: 40px/14px * 1em;
+  height: 35px;
   display: block;
   color: black;
   text-indent: 1em;
   border-radius: 3px;
+  min-width: 0;
+  width: 100%;
 }
 .c-btn {
   font-size: 1.4em;
@@ -55,4 +57,9 @@ html {
 .c-btn:hover {
   color: $color;
   background: white;
+}
+
+.c-select {
+  border-color: $color;
+  height: 35px;
 }

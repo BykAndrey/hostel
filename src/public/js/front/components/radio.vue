@@ -37,9 +37,12 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+@import "./../../../css/config.scss";
 .radio {
   display: block;
   margin-bottom: 10px;
+  font-size: 14px;
+  cursor: pointer;
   input {
     display: none;
   }
@@ -62,17 +65,15 @@ export default {
       display: block;
       position: absolute;
       opacity: 0;
-      height: 70%;
-      width: 70%;
+      height: 60%;
+      width: 60%;
       content: "";
-      background: rgba(16, 90, 109, 0.5);
+      background: $color;
       border-radius: 100%;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      margin: auto;
+      top: 50%;
+      left: 50%;
       transition-duration: 0.3s;
+      transform: translate(-50%, -50%);
     }
   }
 }

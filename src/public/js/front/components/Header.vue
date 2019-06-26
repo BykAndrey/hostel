@@ -11,7 +11,8 @@
 						a.login-link(@click="exitUser",href="/logout")  Выход
 		.header__bottom
 			.header__bottom-wrap.container
-				.header__logo Logo
+				.header__logo
+					img(src="/public/img/logo.svg")
 				.header__menu.h-menu
 					router-link.h-menu__item(to="/") Главная
 					router-link.h-menu__item(to="/catalog") Каталог
@@ -21,6 +22,7 @@
 </template>
 <script>
 const axios = require("axios");
+import img from "./../../../img/logo.svg";
 export default {
   name: "v-header",
   computed: {
@@ -46,8 +48,11 @@ export default {
 };
 </script>
 <style lang="scss">
+@import "./../../../css/config.scss";
 .header {
-  margin-bottom: 40px;
+  &__logo {
+    padding: 3px 0;
+  }
   &__top {
     background: rgba(7, 71, 166, 8);
     &-wrap {
@@ -55,7 +60,7 @@ export default {
     }
   }
   &__bottom {
-    background: rgba(7, 71, 166, 0.5);
+    background: $color2;
     &-wrap {
       display: flex;
     }

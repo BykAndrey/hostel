@@ -321,7 +321,6 @@ label {
     margin-right: 20px;
   }
 }
-input,
 textarea {
   background: white;
   color: black;

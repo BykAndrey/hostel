@@ -5,38 +5,39 @@
 		.p-catalog__center
 			.aside(:class="!onMap?'aside--map':''")
 				.aside__prop
-					label
+					label.on-map
 						input(type="checkbox" v-model="onMap")
-						span Списком
+						span(v-if="!onMap") Списком
+						span(v-if="onMap") На карте
 					.aside__title Страна
 					.aside__box
-						select(v-model="countryId" placeholder= "Страна")
+						select.c-select(v-model="countryId" placeholder= "Страна")
 							option( value="all") Все
 							option(v-for="country in countriesList" :value="country._id") {{ country.name }}
 
 					.aside__title(v-if="countryId && countryId!=='all'") Город
 					.aside__box(v-if="countryId && countryId!=='all'")
-						select(v-model="cityId" placeholder= "Город")
+						select.c-select(v-model="cityId" placeholder= "Город")
 							option( value="all") Все
 							option(v-for="city in cityCountry" :value="city._id") {{ city.name }}
 					
 					.aside__title(v-if="cityId!=='all'&&!onMap") Сектор
 					.aside__box(v-if="cityId!=='all'&&!onMap")
-						select(v-model="currentRegionId" placeholder= "Район")
+						select.c-select(v-model="currentRegionId" placeholder= "Район")
 							option( value="all") Все
 							option(v-for="reg in regionsList" :value="reg.properties.osmId") {{ reg.properties.name }}
 
 					.aside__title(v-if="cityId && cityId !=='all' && metro") Метро
 					.aside__box(v-if="cityId && cityId !=='all' && metro")
-						select(v-model="currentmetro")
+						select.c-select(v-model="currentmetro")
 							option( value="all") Все
 							option(v-for="(station, i) in metro" :key="i" :value="station") {{station}}
 
 					.aside__title Цена
 					.aside__box
 						.price
-							input(type="number" placeholder="Минимальная цена" v-model="minprice")
-							input(type="number" placeholder="Максимальная цена" v-model="maxprice")
+							input.c-input(type="number" placeholder="Минимальная цена" v-model="minprice")
+							input.c-input(type="number" placeholder="Максимальная цена" v-model="maxprice")
 					.aside__title Тип строения	
 					.aside__box
 						radio(v-model="houseType" :name="'type'" val="all" title="Все")
@@ -50,13 +51,7 @@
 						radio(v-model="dealType" :name="'deal'" val="rent" title="Аренда")
 					.aside__title Количество комнат	
 					.aside__box 
-						radio(v-model="countRoom" :name="'countRoom'" val="all" title="Все")
-						radio(v-model="countRoom" :name="'countRoom'" val="1" title="1")
-						radio(v-model="countRoom" :name="'countRoom'" val="2" title="2")
-						radio(v-model="countRoom" :name="'countRoom'" val="3" title="3")
-						radio(v-model="countRoom" :name="'countRoom'" val="more4" title="4+")
-					
-				
+						lineSelect(v-model="countRoom")
 			.p-catalog__items
 				Map(:class="!onMap?'map--map':''" :value="[[0,0]]" :builds="items" v-if="!onMap" :polygon="currentRegion"  keep-alive)
 				listBuildings(v-if="onMap" :list="items")
@@ -67,6 +62,7 @@ import building from "../components/Building.vue";
 import listBuildings from "../components/listBuildings.vue";
 import Map from "../components/map.vue";
 import radio from "../components/radio.vue";
+import lineSelect from "../components/lineSelect.vue";
 import osme from "osme";
 export default {
   name: "catalog",
@@ -74,7 +70,8 @@ export default {
     building,
     listBuildings,
     Map,
-    radio
+    radio,
+    lineSelect
   },
   data() {
     return {
@@ -264,8 +261,10 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+@import "./../../../css/config.scss";
 .p-catalog {
   position: relative;
+  padding-top: 40px;
   &__title {
     margin-bottom: 20px;
     font-size: 18px;
@@ -320,11 +319,39 @@ export default {
 }
 .price {
   display: flex;
-  input {
+  .c-input {
     display: block;
     flex: 0 0 50%;
     padding: 0;
     text-align: center;
+    border-radius: 0;
+    height: 35px;
+  }
+}
+.on-map {
+  display: block;
+  width: 100%;
+  input {
+    display: none;
+    &:checked + span {
+      background: white;
+      color: $color;
+    }
+  }
+  span {
+    transition-duration: 0.3s;
+    display: block;
+    color: white;
+    background: $color;
+    width: 100%;
+    text-align: center;
+    font-size: 14px;
+    padding: 5px;
+    cursor: pointer;
+    border: 1px solid $color;
+    &:hover {
+      opacity: 0.8;
+    }
   }
 }
 </style>
