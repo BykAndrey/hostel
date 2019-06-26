@@ -266,6 +266,10 @@ export default {
 <style lang="scss" scoped>
 .p-catalog {
   position: relative;
+  &__title {
+    margin-bottom: 20px;
+    font-size: 18px;
+  }
   &--map {
     max-width: 100%;
     padding: 0;

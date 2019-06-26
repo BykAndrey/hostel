@@ -1,7 +1,8 @@
 <template lang="pug">
 	div()
 		.list
-			building(v-for="item in list" :el="item")
+			.list__el(v-for="item in list")
+				building(:el="item")
 		pag(v-bind:total_count="countItems", v-bind:size="size", v-on:changepage="changePage")
 </template>
 <script>
@@ -32,24 +33,24 @@ export default {
       var self = this;
 
       /* axios({
-        method: "get",
-        url: self.$store.state.server + "/api/building",
-        headers: {
-          "Content-type": "application/json"
-        },
-        params: {
-          size: self.size,
-          page: self.currentPage
-        }
-      })
-        .then(function(data) {
-          self.list = data.data.data;
-          self.countItems = data.data.count;
-          console.log("self.countItems:" + self.countItems);
-        })
-        .catch(function(e) {
-          console.error(e);
-        });*/
+				method: "get",
+				url: self.$store.state.server + "/api/building",
+				headers: {
+					"Content-type": "application/json"
+				},
+				params: {
+					size: self.size,
+					page: self.currentPage
+				}
+			})
+				.then(function(data) {
+					self.list = data.data.data;
+					self.countItems = data.data.count;
+					console.log("self.countItems:" + self.countItems);
+				})
+				.catch(function(e) {
+					console.error(e);
+				});*/
     },
     changePage(page, e) {
       this.currentPage = page >= 0 ? page : 1;
@@ -63,6 +64,11 @@ export default {
 .list {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: flex-start;
+  margin-left: -20px;
+  &__el {
+    width: calc(25% - 20px);
+    margin-left: 20px;
+  }
 }
 </style>

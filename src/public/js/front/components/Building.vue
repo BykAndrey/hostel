@@ -1,21 +1,26 @@
 <template lang="pug">
 	.el-building
 		.el-building__price {{el.price}}&nbsp;$
+		.el-building__date {{date}}
 		.el-building__photo
 			swiper(:options='swiperOption', ref='mySwiper')
 					swiper-slide(v-for="i in el.photo")
 						.image(:style=`'background-image: url(' + i.url + ')'`)
 		.el-building__head
-			p {{ typeBuild }} {{ typeDeal }}
-			p(v-if="el.country_id && el.city_id") 
-				| {{ el.country_id.name }}, {{ el.city_id.name }}, 
-				| {{ el.address }}
-			router-link.el-building__title(:to="'/'+el._id") {{el.title}} 
-			router-link(v-if="user" :to="'/'+el._id+'/edit'") Редактировать
-			.el-building__date {{date}}    
-			ul.el-building__metro
-				template(v-for="item in el.metro")
-					li(v-if="item!=='no'") {{item}}
+			.prop
+				router-link.el-building__title(:to="'/'+el._id") {{el.title}} 
+			.prop(v-if="user")
+				router-link(:to="'/'+el._id+'/edit'") Редактировать
+			.prop 
+				p Тип жилья: {{ typeBuild }}
+				p Тип сделки {{ typeDeal }}
+			.prop
+				.el-building__address(:title="fullAddress") {{ address }}
+			.prop(v-if="el.metro && el.metro.length > 0")
+				ul.el-building__metro
+					template(v-for="item in el.metro")
+						li(v-if="item!=='no'") {{item}}
+		router-link.c-btn.el-building__details(:to="'/'+el._id") Подробнее
 </template>
 <script>
 export default {
@@ -65,43 +70,56 @@ export default {
         house: "Дом"
       };
       return data[this.el.type];
+    },
+    address() {
+      return `${this.el.city_id.name}  ${this.el.address}`;
+    },
+    fullAddress() {
+      return `${this.el.country_id.name}  ${this.el.city_id.name}  ${
+        this.el.address
+      }`;
     }
   }
 };
 </script>
 <style lang="scss">
 .el-building {
-  flex: 0 1 250px;
+  width: 100%;
   position: relative;
-  max-width: 250px;
-
   border-radius: 2px;
-
   background: white;
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15), 0 2px 3px rgba(0, 0, 0, 0.2);
-  margin-bottom: 20px;
   transition-duration: 0.3s;
+  overflow: hidden;
   &:hover {
     box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.15),
       0 2px 3px rgba(0, 0, 0, 0.2);
   }
   &__photo {
     height: 150px;
-    margin-bottom: 10px;
     .image {
       object-fit: contain;
       width: 100%;
       height: 150px;
     }
   }
+  &__details {
+    margin-top: 10px;
+    border-radius: 0;
+  }
   &__head {
-    margin-bottom: 10px;
-    padding: 10px;
+    //padding: 10px;
+    border-top: 1px solid rgba(0, 0, 0, 0.2);
+    .prop {
+      padding: 7px 15px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
   }
   &__title {
-    font-size: 16px;
+    font-size: 15px;
     font-family: Arial, Helvetica, sans-serif;
     color: #333333;
+    display: block;
   }
   &__price {
     top: 0;
@@ -116,11 +134,13 @@ export default {
     border-radius: 0 3px 0 0;
   }
   &__address {
-    font-size: 18px;
-    font-weight: 700;
-    span {
-      color: rgba(255, 0, 0, 0.7);
-    }
+    font-size: 13px;
+    font-weight: 300;
+    line-height: 1em;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 100%;
   }
   &__date {
     top: 0;
