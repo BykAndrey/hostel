@@ -36,120 +36,126 @@
 <script>
 import axios from "axios";
 export default {
-  data() {
-    return {
-      editEl: {
-        _id: null,
-        country_id: "",
-        name: "",
-        level: 200,
-        metro: [],
-        osme:""
-      },
-      newmetro: "",
-      list: [],
-      countries: []
-    };
-  },
-  created() {
-    this.reloadList();
-    this.loadCountries();
-  },
-  methods: {
-    remove(el) {
-      el.edit = false;
-      axios({
-        method: "delete",
-        url: "api/city/" + el._id,
-        data: el
-      }).then(({ data }) => {
-        this.reloadList();
-      });
-    },
-    loadCountries() {
-      axios({
-        url: `api/countries`
-      }).then(({ data }) => {
-        this.countries = data.map(el => {
-          return el;
-        });
-        this.editEl.country_id = this.countries[0]._id;
-      });
-    },
-    reloadList() {
-      axios({
-        url: `api/city`
-      }).then(({ data }) => {
-        this.list = data.map(el => {
-          return el;
-        });
-      });
-    },
-    create() {
-      if (this.editEl.name.length <= 3 || this.editEl.country_id.length < 5) {
-        return false;
-      }
-      let data = { ...this.editEl };
-      data.metro = JSON.stringify(data.metro);
-      axios({
-        method: "post",
-        url: "api/city",
-        data: data
-      }).then(({ data }) => {
-        this.editEl._id = null;
-        this.editEl.name = "";
-        this.editEl.metro = [];
-        this.editEl.osme = "";
-        this.reloadList();
-      });
-    },
-    setForEdit(el) {
-      this.editEl = el;
-    },
-    addMetro() {
-      if (this.newmetro.length > 3) {
-        this.editEl.metro.push(this.newmetro);
-        this.newmetro = "";
-      }
-    },
-    update() {
-      if (this.editEl.name.length <= 3 || this.editEl.country_id.length < 5) {
-        return false;
-      }
-      let data = { ...this.editEl };
-      data.metro = JSON.stringify(data.metro);
-      axios({
-        method: "put",
-        url: "api/city/" + this.editEl._id,
-        data: data
-      }).then(({ data }) => {
-        this.name = "";
-        this.reloadList();
-      });
-    }
-  }
+	data() {
+		return {
+			editEl: {
+				_id: null,
+				country_id: "",
+				name: "",
+				level: 200,
+				metro: [],
+				osme: ""
+			},
+			newmetro: "",
+			list: [],
+			countries: []
+		};
+	},
+	created() {
+		this.reloadList();
+		this.loadCountries();
+	},
+	methods: {
+		remove(el) {
+			el.edit = false;
+			axios({
+				method: "delete",
+				url: this.$store.state.server + "/api/city/" + el._id,
+				data: el
+			}).then(({ data }) => {
+				this.reloadList();
+			});
+		},
+		loadCountries() {
+			axios({
+				url: this.$store.state.server + "/api/countries"
+			}).then(({ data }) => {
+				this.countries = data.map(el => {
+					return el;
+				});
+				this.editEl.country_id = this.countries[0]._id;
+			});
+		},
+		reloadList() {
+			axios({
+				url: this.$store.state.server + "/api/city"
+			}).then(({ data }) => {
+				this.list = data.map(el => {
+					return el;
+				});
+			});
+		},
+		create() {
+			if (
+				this.editEl.name.length <= 3 ||
+				this.editEl.country_id.length < 5
+			) {
+				return false;
+			}
+			let data = { ...this.editEl };
+			data.metro = JSON.stringify(data.metro);
+			axios({
+				method: "post",
+				url: this.$store.state.server + "/api/city",
+				data: data
+			}).then(({ data }) => {
+				this.editEl._id = null;
+				this.editEl.name = "";
+				this.editEl.metro = [];
+				this.editEl.osme = "";
+				this.reloadList();
+			});
+		},
+		setForEdit(el) {
+			this.editEl = el;
+		},
+		addMetro() {
+			if (this.newmetro.length > 3) {
+				this.editEl.metro.push(this.newmetro);
+				this.newmetro = "";
+			}
+		},
+		update() {
+			if (
+				this.editEl.name.length <= 3 ||
+				this.editEl.country_id.length < 5
+			) {
+				return false;
+			}
+			let data = { ...this.editEl };
+			data.metro = JSON.stringify(data.metro);
+			axios({
+				method: "put",
+				url: this.$store.state.server + "/api/city/" + this.editEl._id,
+				data: data
+			}).then(({ data }) => {
+				this.name = "";
+				this.reloadList();
+			});
+		}
+	}
 };
 </script>
 <style lang="scss" scoped>
 .item-row {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  background: white;
-  padding: 10px;
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+	background: white;
+	padding: 10px;
 }
 .create {
-  &__metro {
-    .item {
-      display: inline-block;
-      padding: 5px;
-      background: white;
-    }
-  }
-  &__type {
-    label {
-      display: block;
-    }
-  }
+	&__metro {
+		.item {
+			display: inline-block;
+			padding: 5px;
+			background: white;
+		}
+	}
+	&__type {
+		label {
+			display: block;
+		}
+	}
 }
 </style>
