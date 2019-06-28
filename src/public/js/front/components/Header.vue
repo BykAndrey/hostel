@@ -3,11 +3,11 @@
 		.header__top
 			.header__top-wrap.container
 				.header__user
-					template(v-if="activeUser===undefined")
+					template(v-if="!user")
 						router-link.login-link(to="/login")  Авторизация
 						router-link.login-link(to="/registration")  Регистрация
 					template(v-else)
-						router-link.login-link(to="/account")  {{activeUser.name}}
+						router-link.login-link(to="/account")  {{user.name}}
 						a.login-link(@click="exitUser",href="/logout")  Выход
 		.header__bottom
 			.header__bottom-wrap.container
@@ -23,22 +23,27 @@
 <script>
 const axios = require("axios");
 import img from "./../../../img/logo.svg";
+import { mapState } from "vuex";
 export default {
   name: "v-header",
   computed: {
     activeUser(old, n) {
       return this.$store.state.user;
-    }
+    },
+    ...mapState({
+      user: state => state.userData
+    })
   },
   methods: {
     exitUser(e) {
       var self = this;
       e.preventDefault();
       axios
-        .get("/api/logout", {})
+        .get(this.$store.state.server + "/api/logout", {})
         .then(function() {
           self.$store.commit("clearSession");
           self.$store.dispatch("sessionUser");
+          self.$store.commit("removeUserData");
         })
         .catch(function(er) {
           console.log(er);

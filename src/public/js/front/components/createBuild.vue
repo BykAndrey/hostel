@@ -225,11 +225,13 @@ export default {
         country_id: this.country_id,
         city_id: this.city_id
       };
-      console.log(data);
       axios({
         url: this.$store.state.server + "/api/building/create",
         method: "post",
-        data: data
+        data: data,
+        headers: {
+          Authorization: `Bearer ${this.$store.state.userData.token}`
+        }
       }).then(({ data }) => {
         if (data._id !== undefined) {
           this.id = data._id;
@@ -260,9 +262,15 @@ export default {
         city_id: this.city_id
       };
       await axios({
-        method: "post",
-        url: "/api/building/edit/" + this.$route.params.id,
-        data: data
+        method: "put",
+        url:
+          this.$store.state.server +
+          "/api/building/edit/" +
+          this.$route.params.id,
+        data: data,
+        headers: {
+          Authorization: `Bearer ${this.$store.state.userData.token}`
+        }
       }).then(res => {
         console.log(data);
       });
@@ -279,7 +287,8 @@ export default {
           formData,
           {
             headers: {
-              "Content-Type": "multipart/form-data"
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${this.$store.state.userData.token}`
             }
           }
         )
@@ -291,6 +300,9 @@ export default {
       axios({
         method: "post",
         url: `${this.$store.state.server}/api/building/remove-image`,
+        headers: {
+          Authorization: `Bearer ${this.$store.state.userData.token}`
+        },
         data: {
           id: this.id,
           photo: i

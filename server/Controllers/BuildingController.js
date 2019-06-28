@@ -3,6 +3,7 @@ var fs = require("fs");
 var path = require("path");
 var mv = require("mv");
 const BuildingModel = require("./../Models/Base.js").Building;
+const userLib = require("../lib/user.js");
 
 class Building {
   constructor(db) {
@@ -54,12 +55,25 @@ class Building {
       });
     //return res.status(200).send('Get List')
   }
-  create(req, res) {
+  async create(req, res) {
     res.header("Access-Control-Allow-Origin", "*");
-    var user_id = req.session.user_id;
+    // = req.session.user_id;
+    /*
     if (user_id === undefined) {
       return res.send("нужно авторизоваться");
+    }*/
+    let key = userLib.getToken(req);
+
+    if (!key) {
+      return res.sendStatus(401);
     }
+    let user = await userLib.userByToken(key);
+
+    if (!user) {
+      return res.sendStatus(401);
+    }
+    console.log("user", user);
+    var user_id = user._id;
     let price = req.body.price;
     let data = {
       user_id: user_id,
@@ -76,7 +90,10 @@ class Building {
       active: false,
       countroom: req.body.countroom,
       country_id: req.body.country_id,
-      city_id: req.body.city_id
+      city_id: req.body.city_id,
+      total_area: req.body.total_area,
+      live_area: req.body.live_area,
+      kitchen_area: req.body.kitchen_area
     };
 
     var b = new BuildingModel(data);
@@ -163,13 +180,20 @@ class Building {
     });*/
   }
 
-  edit(req, res) {
+  async edit(req, res) {
     res.header("Access-Control-Allow-Origin", "*");
-    //return res.send(req.params["id"]);
     var user_id = req.session.user_id;
-    if (user_id === undefined) {
-      return res.send("нужно авторизоваться");
+    /** */
+    let key = userLib.getToken(req);
+
+    if (!key) {
+      return res.sendStatus(401);
     }
+    let user = await userLib.userByToken(key);
+    if (!user) {
+      return res.sendStatus(401);
+    }
+    /** */
     let price = req.body.price;
     let data = {
       user_id: user_id,
@@ -186,7 +210,10 @@ class Building {
       active: req.body.active,
       countroom: req.body.countroom,
       country_id: req.body.country_id,
-      city_id: req.body.city_id
+      city_id: req.body.city_id,
+      total_area: req.body.total_area,
+      live_area: req.body.live_area,
+      kitchen_area: req.body.kitchen_area
     };
 
     BuildingModel.update({ _id: req.body._id }, { $set: data }, function(

@@ -21,6 +21,9 @@ const Building = new Schema(
     type_deal: String,
     type: String,
     countroom: Number,
+    total_area: Number,
+    live_area: Number,
+    kitchen_area: Number,
     address: {
       type: String
     },
