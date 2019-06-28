@@ -15,70 +15,70 @@
 <script>
 import axios from "axios";
 export default {
-  data() {
-    return {
-      name: "",
-      list: []
-    };
-  },
-  created() {
-    this.reloadList();
-  },
-  methods: {
-    save(el) {
-      el.edit = false;
-      axios({
-        method: "put",
-        url: "api/countries/" + el._id,
-        data: el
-      }).then(({ data }) => {
-        el = { edit: false, ...data };
-      });
-    },
-    remove(el) {
-      el.edit = false;
-      axios({
-        method: "delete",
-        url: "api/countries/" + el._id,
-        data: el
-      }).then(({ data }) => {
-        this.reloadList();
-      });
-    },
-    reloadList() {
-      axios({
-        url: `api/countries`
-      }).then(({ data }) => {
-        this.list = data.map(el => {
-          el.edit = false;
-          return el;
-        });
-      });
-    },
-    create() {
-      if (this.name.length <= 3) {
-        return false;
-      }
-      axios({
-        method: "post",
-        url: "api/countries",
-        data: {
-          name: this.name
-        }
-      }).then(({ data }) => {
-        this.name = "";
-        this.reloadList();
-      });
-    }
-  }
+	data() {
+		return {
+			name: "",
+			list: []
+		};
+	},
+	created() {
+		this.reloadList();
+	},
+	methods: {
+		save(el) {
+			el.edit = false;
+			axios({
+				method: "put",
+				url: this.$store.state.server + "/api/countries/" + el._id,
+				data: el
+			}).then(({ data }) => {
+				el = { edit: false, ...data };
+			});
+		},
+		remove(el) {
+			el.edit = false;
+			axios({
+				method: "delete",
+				url: this.$store.state.server + "/api/countries/" + el._id,
+				data: el
+			}).then(({ data }) => {
+				this.reloadList();
+			});
+		},
+		reloadList() {
+			axios({
+				url: this.$store.state.server + `/api/countries`
+			}).then(({ data }) => {
+				this.list = data.map(el => {
+					el.edit = false;
+					return el;
+				});
+			});
+		},
+		create() {
+			if (this.name.length <= 3) {
+				return false;
+			}
+			axios({
+				method: "post",
+				url: this.$store.state.server + "/api/countries",
+				data: {
+					name: this.name
+				}
+			}).then(({ data }) => {
+				this.name = "";
+				this.reloadList();
+			});
+		}
+	}
 };
 </script>
 <style lang="scss" scoped>
 .item {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  background: white;
-  padding: 10px;
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+	background: white;
+	padding: 10px;
 }
 </style>

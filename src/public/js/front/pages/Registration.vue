@@ -21,51 +21,47 @@
             
 </template>
 <script>
-const axios=require('axios');
-const qs=require('qs');;
+const axios = require("axios");
+const qs = require("qs");
 export default {
-    name:'login',
-    data(){
-        return {
-            errors:[],
-            login:'andreybyk9606@gmail.com',
-            name:'',
-            age:'',
-            password:'password',
-            response:'asdf'
-        }
-    },
-    methods:{
-        checkForm(e){
-             e.preventDefault();
-               
-            var self=this;
-        
-            var data={
-                mail:self.login,
-                password:self.password,
-                name:self.name,
-                age:self.age
-            }
-             axios({
-                    method:'put',
-                    url:'/api/users',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    data:qs.stringify(data)
-                })
-                .then(function(res){
-                    self.response=res.data,
-                    self.$store.dispatch('sessionUser')
-                })
-         
-        },
-        sendForm(){ 
-            
-        }
-    }
-}
+	name: "login",
+	data() {
+		return {
+			errors: [],
+			login: "andreybyk9606@gmail.com",
+			name: "",
+			age: "",
+			password: "password",
+			response: "asdf"
+		};
+	},
+	methods: {
+		checkForm(e) {
+			e.preventDefault();
+
+			var self = this;
+
+			var data = {
+				mail: self.login,
+				password: self.password,
+				name: self.name,
+				age: self.age
+			};
+			axios({
+				method: "post",
+				url: this.$store.state.server + "/api/users",
+				headers: {
+					"Content-Type": "application/x-www-form-urlencoded"
+				},
+				data: qs.stringify(data)
+			}).then(function(res) {
+				(self.response = res.data), self.$store.dispatch("sessionUser");
+			});
+		},
+		sendForm() {}
+	}
+};
 </script>
 <style lang="scss">
-
 </style>
 
