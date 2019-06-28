@@ -21,7 +21,7 @@ module.exports = function(app, db) {
     res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
     res.header(
       "Access-Control-Allow-Headers",
-      "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers"
+      "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, Authorization"
     );
     next();
   });
@@ -30,7 +30,7 @@ module.exports = function(app, db) {
   app.post("/api/building/upload-image", building.uploadImage.bind(building));
   app.post("/api/building/remove-image", building.removeImage.bind(building));
   // app.post('/api/building/edit/',building.getList.bind(building));
-  app.post("/api/building/edit/:id", building.edit.bind(building));
+  app.put("/api/building/edit/:id", building.edit.bind(building));
   app.get("/api/building/:id", building.getOne.bind(building));
 
   app.get("/api/building", building.getList.bind(building));
@@ -56,6 +56,7 @@ module.exports = function(app, db) {
   app.post("/api/login", urlencodedParser, auth.login.bind(auth));
   app.get("/api/current-user", auth.currentUser.bind(auth));
   app.get("/api/logout", auth.logout.bind(auth));
+  app.get("/api/profile", auth.profile.bind(auth));
 
   //
   app.get("/api/users/:id", userC.getById.bind(userC));

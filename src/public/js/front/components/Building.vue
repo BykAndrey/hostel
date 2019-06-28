@@ -9,8 +9,7 @@
 		.el-building__head
 			.prop
 				router-link.el-building__title(:to="'/'+el._id") {{el.title}} 
-			.prop(v-if="user")
-				router-link(:to="'/'+el._id+'/edit'") Редактировать
+			
 			.prop 
 				p Тип жилья: {{ typeBuild }}
 				p Тип сделки {{ typeDeal }}
@@ -21,6 +20,7 @@
 					template(v-for="item in el.metro")
 						li(v-if="item!=='no'") {{item}}
 		router-link.c-btn.el-building__details(:to="'/'+el._id") Подробнее
+		router-link.c-btn.el-building__edit(v-if="user" :to="'/'+el._id+'/edit'") Редактировать
 </template>
 <script>
 export default {
@@ -47,10 +47,8 @@ export default {
       return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
     },
     user() {
-      let us = this.$store.state.idUser;
-      console.log({ us });
-      if (us !== undefined) {
-        if (this.el.user_id._id === us) {
+      if (this.$store.state.userData) {
+        if (this.el.user_id._id === this.$store.state.userData._id) {
           return true;
         }
       }
@@ -79,7 +77,8 @@ export default {
         this.el.address
       }`;
     }
-  }
+  },
+  created() {}
 };
 </script>
 <style lang="scss">
@@ -91,6 +90,7 @@ export default {
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15), 0 2px 3px rgba(0, 0, 0, 0.2);
   transition-duration: 0.3s;
   overflow: hidden;
+  margin-bottom: 20px;
   &:hover {
     box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.15),
       0 2px 3px rgba(0, 0, 0, 0.2);
@@ -172,6 +172,10 @@ export default {
       color: white;
       background: rgb(214, 0, 0);
     }
+  }
+  &__edit {
+    border-radius: 0;
+    font-size: 12px;
   }
 }
 </style>
