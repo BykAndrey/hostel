@@ -15,34 +15,41 @@ import build from "./pages/build.vue";
 let routes = [
   {
     path: "/login",
-    component: LoginPage
-  },
-  {
-    path: "/registration",
-    component: Registration
-  },
-  {
-    path: "/account",
-    component: UserPage,
-    beforeEnter: (to, from, next) => {
-      //console.log(store);
-      store.dispatch("sessionUser", {
-        cb: function() {
-          console.log("store.getters.isAuth=" + store.getters.isAuth);
-          if (store.getters.isAuth == false) {
-            next({
-              path: "/login"
-            });
-          } else {
-            next();
-          }
-        }
-      });
-
-      //
+    component: LoginPage,
+    beforeEnter(to, from, next) {
+      if (!store.state.userData) {
+        next();
+      } else {
+        next("/account");
+      }
     }
   },
   {
+    name: "registration",
+    path: "/registration",
+    component: Registration,
+    beforeEnter(to, from, next) {
+      if (!store.state.userData) {
+        next();
+      } else {
+        next("/account");
+      }
+    }
+  },
+  {
+    name: "account",
+    path: "/account",
+    component: UserPage,
+    beforeEnter(to, from, next) {
+      if (store.state.userData) {
+        next();
+      } else {
+        next("/login");
+      }
+    }
+  },
+  {
+    name: "catalog",
     path: "/catalog",
     component: Catalog
   },
@@ -51,18 +58,16 @@ let routes = [
     path: "/:id/edit",
     component: EditBuilder
   },
-
   {
     path: "/:id",
     component: build
   },
-
   {
     path: "/",
     component: MainPage
   }
 ];
 export default new VueRouter({
-  // mode: "history",
+  //mode: "history",
   routes
 });

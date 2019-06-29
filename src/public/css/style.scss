@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css?family=Open+Sans:400,700&subset=cyrillic");
+@import "config.scss";
 body {
   /* background: rgba(0,200,0,.1);
     display: grid;
@@ -20,23 +21,45 @@ html {
   box-sizing: border-box;
 }
 .container {
-  max-width: 1200px;
+  max-width: 1300px;
   padding: 0 1.5rem;
   margin: 0 auto;
 }
 .c-input {
   background: white;
-  border: 1px solid #333333;
+  border: 1px solid $color;
   font-size: 1.4em;
-  height: 40px/14px * 1em;
+  height: 35px;
   display: block;
   color: black;
   text-indent: 1em;
   border-radius: 3px;
+  min-width: 0;
+  width: 100%;
 }
 .c-btn {
   font-size: 1.4em;
   display: block;
   text-transform: uppercase;
-  border: 1px solid g;
+  border: 1px solid $color;
+  background: $color;
+  color: white;
+  text-align: center;
+  border-radius: 4px;
+  padding: 8px;
+  cursor: pointer;
+  position: relative;
+  transition-duration: 0.3s;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.c-btn:hover {
+  color: $color;
+  background: white;
+}
+
+.c-select {
+  border-color: $color;
+  height: 35px;
 }

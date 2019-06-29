@@ -12,8 +12,13 @@ export default {
     v_header
   },
   beforeMount() {
+    console.log("created");
+    this.$store.dispatch("GET_COOKIE").then(e => {
+      this.$store.dispatch("CHECK_USER").then(() => {
+        this.$store.dispatch("GET_PROFILE");
+      });
+    });
     this.$store.dispatch("sessionUser");
-    console.log(1);
   },
   methods: {}
 };
