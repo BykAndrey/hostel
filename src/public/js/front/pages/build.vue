@@ -1,20 +1,22 @@
 <template lang="pug">
 	.building.container
-		.building__title {{item.address}} 
-			b {{item.price}} $
-		.building__slider 
-			swiper(:options='swiperOption', ref='mySwiper')
-				// slides
-				swiper-slide(v-for="i in item.photo")
-					img(:src="i.url")
-				.swiper-pagination(slot='pagination')
-				.swiper-button-prev(slot='button-prev')
-				.swiper-button-next(slot='button-next')
-				.swiper-scrollbar(slot='scrollbar')
+		.building__left
+			.building__title {{item.address}} 
+				b {{item.price}} $
+			.building__slider 
+				swiper(:options='swiperOption', ref='mySwiper')
+					// slides
+					swiper-slide(v-for="i in item.photo")
+						img(:src="i.url")
+					.swiper-pagination(slot='pagination')
+					.swiper-button-prev(slot='button-prev')
+					.swiper-button-next(slot='button-next')
+					.swiper-scrollbar(slot='scrollbar')
 
-		.building__desciption {{item.desc}}
-		.building__map На карте
-		Map(:builds='[item]')
+			.building__desciption {{item.desc}}
+		.building__right
+			.building__title На карте
+			Map(:builds='[item]')
 </template>
 <script>
 import axios from "axios";
@@ -53,9 +55,20 @@ export default {
 <style lang="scss" scoped>
 .building {
   padding: 22px;
+  display: flex;
+  &__left {
+    flex: 0 1 600px;
+    min-width: 0;
+    margin-right: 30px;
+  }
+  &__right {
+    flex: 0 0 500px;
+    min-width: 0;
+  }
   &__title {
     font-size: 22px;
     font-weight: 800;
+    margin-bottom: 20px;
   }
   &__desciption {
     font-size: 14px;

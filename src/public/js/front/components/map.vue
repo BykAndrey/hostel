@@ -240,9 +240,16 @@ export default {
             objects.search('geometry.type == "Point"').clusterize()
           );
         }
-        console.log("this.map.geoObjects", this.map.geoObjects);
+        console.log(
+          "this.map.geoObjects.getBounds()",
+          this.map.action.getCurrentState().zoom - 1
+        );
         if (this.map.geoObjects) {
           this.map.setBounds(this.map.geoObjects.getBounds());
+          let zoom = this.map.action.getCurrentState().zoom;
+          console.log("before", zoom);
+          this.map.setZoom(zoom > 18 ? 18 : zoom);
+          console.log("after", this.map.action.getCurrentState().zoom);
         }
       }
     },
