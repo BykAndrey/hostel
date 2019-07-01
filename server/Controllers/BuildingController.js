@@ -66,7 +66,46 @@ class Building {
                     });
                 });
             });
-        //return res.status(200).send('Get List')
+    }
+    async getListUser(req, res) {
+        let key = userLib.getToken(req);
+
+        if (!key) {
+            return res.sendStatus(401);
+        }
+        let user = await userLib.userByToken(key);
+
+        if (!user) {
+            return res.sendStatus(401);
+        }
+        BuildingModel.find({ user_id: user._id })
+            .populate("user_id")
+            .populate("country_id")
+            .populate("city_id")
+            .exec(function(error, data) {
+                if (error) {
+                    return res.send(error);
+                }
+                BuildingModel.count({}, function(er2, d2) {
+                    if (er2) {
+                        return res.send(er2);
+                    }
+                    data = data.sort((a, b) => {
+                        if (
+                            new Date(a.updatedAt).getTime() >
+                            new Date(b.updatedAt).getTime()
+                        ) {
+                            return -1;
+                        } else {
+                            return 1;
+                        }
+                    });
+                    return res.status(200).send({
+                        data: data,
+                        count: d2
+                    });
+                });
+            });
     }
     async create(req, res) {
         res.header("Access-Control-Allow-Origin", "*");
@@ -104,9 +143,14 @@ class Building {
             countroom: req.body.countroom,
             country_id: req.body.country_id,
             city_id: req.body.city_id,
+            countroom: req.body.countroom,
+            countroomMax: req.body.countroomMax,
             total_area: req.body.total_area,
             live_area: req.body.live_area,
-            kitchen_area: req.body.kitchen_area
+            kitchen_area: req.body.kitchen_area,
+            level: req.body.level,
+            levelMax: req.body.levelMax,
+            restroom: req.body.restroom
         };
 
         var b = new BuildingModel(data);
@@ -198,19 +242,22 @@ class Building {
 
     async edit(req, res) {
         res.header("Access-Control-Allow-Origin", "*");
-        var user_id = req.session.user_id;
+        // var user_id = req.session.user_id;
         /** */
         let key = userLib.getToken(req);
 
         if (!key) {
             return res.sendStatus(401);
         }
+
         let user = await userLib.userByToken(key);
         if (!user) {
             return res.sendStatus(401);
         }
+        let user_id = user._id;
         /** */
         let price = req.body.price;
+        console.log("edit", user_id);
         let data = {
             user_id: user_id,
             address: req.body.address,
@@ -227,11 +274,16 @@ class Building {
             countroom: req.body.countroom,
             country_id: req.body.country_id,
             city_id: req.body.city_id,
+            countroom: req.body.countroom,
+            countroomMax: req.body.countroomMax,
             total_area: req.body.total_area,
             live_area: req.body.live_area,
-            kitchen_area: req.body.kitchen_area
+            kitchen_area: req.body.kitchen_area,
+            level: req.body.level,
+            levelMax: req.body.levelMax,
+            restroom: req.body.restroom
         };
-
+        console.log("edit", data);
         BuildingModel.update({ _id: req.body._id }, { $set: data }, function(
             er,
             data

@@ -1,65 +1,89 @@
 <template lang="pug">
 	.create-build
-		fieldset
-			legend Базавые данные {{id}}
+		fieldset.fieldset
+			legend(v-if="id") Редактирование
+			legend(v-else) Новое объявление
 			label
 				b Название
-				input(type="text",v-model="title")
+				input.c-input(type="text",v-model="title")
 			label
 				b Тип сделки
-				select(v-model="type_deal")
-					option(value="rent") Стам
-					option(value="sale") Продам
+				select.c-select(v-model="type_deal")
+					option(value="rent") Аренда
+					option(value="sale") Продажа
 			label
 				b Тип
-				select(v-model="type")
+				select.c-select(v-model="type")
 					option(value="apartament") Квартира
 					option(value="room") Комната
 					option(value="house") Дом
 			label
 				b Количество комнат
-				input(type="number" v-model="countroom")
+				input.c-input(type="number" v-model="countroom")
 			label
 				b Страна
-				select(v-model="country_id")
+				select.c-select(v-model="country_id")
 					option(v-for="item in countriesList" :key="item._id" :value="item._id") {{ item.name }}
 			label(v-if="country_id")
 				b Населенный пункт
-				select(v-model="city_id")
+				select.c-select(v-model="city_id")
 					option(v-for="item in cityCountry" :key="item._id" :value="item._id") {{ item.name }}
 			label(v-if="city_id")
 				b Метро
-				select(v-model="metro" multiple)
-					//option(value="no") Метро нет
+				select.c-select(v-model="metro" multiple)
 					option(v-for="item in metroList" :value="item") {{item}}
 			label
 				b Улица <br> (если в списке нет нужного населенного пунка, то его нужно написать здесь)
-				input(type="text",v-model="address")
+				input.c-input(type="text",v-model="address")
 			label
 				b Цена
-				input(type="text",v-model="price")
+				input.c-input(type="text",v-model="price")
 			check(v-model="coordsFlag") Установить координаты в ручную
-			fieldset.coordinates(v-if="coordsFlag")
+			fieldset.fieldset(v-if="coordsFlag")
 				legend Координаты
-
 				label
 					b Кордината 1
-					input(type="text",v-model="cord1")
+					input.c-input(type="text",v-model="cord1")
 				label
 					b Кордината 2
-					input(type="text",v-model="cord2")
+					input.c-input(type="text",v-model="cord2")
+			fieldset.fieldset
+				legend Параметры
+				label
+					b Количество комнат
+					input.c-input(type="text" v-model="countroom") 
+					| /
+					input.c-input(type="text" v-model="countroomMax")
+				label
+					b Этаж
+					input.c-input(type="text" v-model="level") 
+					| /
+					input.c-input(type="text" v-model="levelMax")
+				label
+					b Площадь
+					input.c-input(type="text" v-model="total_area")
+				label
+					b Площадь под сдачу/продажу
+					input.c-input(type="text" v-model="live_area")
+				label
+					b Площадь кухни
+					input.c-input(type="text" v-model="kitchen_area")
+				label
+					b Раздельный санузел
+					input.c-input(type="checkbox" v-model="restroom")
+					
 			label
 				b Описание
 				textarea(v-model="desc")
 			
 			label
-				b active
+				b Опубликовано
 				input( type="checkbox" v-model="active")
 			button.c-btn(v-if="id==undefined" v-on:click="baseCreate") Создать
 			button.c-btn(v-else v-on:click="baseEdit") Редактировать
-			p {{countyName}} {{CityName}}
+			hr
 			Map(:address = "countyName + ' ' + CityName + ' ' + address" @coords="getCoords")
-		fieldset(v-if="id!==undefined")
+		fieldset.fieldset(v-if="id!==undefined")
 			legend Изображения
 			template(v-for="(item,i) in photo")
 				img(:src="item.url", width="100px" @click="removeImage(item._id)")
@@ -68,279 +92,328 @@
 </template>
 <script>
 import axios from "axios";
-import metro from "../../help/metro.json";
+//import metro from "../../help/metro.json";
 import Map from "../components/map.vue";
 import check from "../components/check.vue";
-console.log(metro);
 export default {
-  props: ["value"],
-  components: {
-    Map,
-    check
-  },
-  data() {
-    return {
-      countriesList: [],
-      allCity: [],
-      cityCountry: [],
-      metroList: metro,
-      id: undefined,
-      country_id: "",
-      city_id: "",
-      created: false,
-      title: "",
-      address: "",
-      cord1: 0,
-      cord2: 0,
-      price: 0,
-      desc: "",
-      photo: [],
-      type_deal: "sale",
-      type: "apartament",
-      countroom: 0,
-      metro: [],
-      views: 0,
-      active: false,
-      file: undefined,
-      coordsFlag: false
-    };
-  },
-  computed: {
-    countyName() {
-      let country = this.countriesList.filter(el => {
-        return el._id === this.country_id;
-      })[0];
-      return country ? country.name : "";
-    },
-    CityName() {
-      let country = this.cityCountry.filter(el => {
-        return el._id === this.city_id;
-      })[0];
-      return country ? country.name : "";
-    }
-  },
-  watch: {
-    country_id() {
-      this.cityCountry = this.allCity.filter(el => {
-        return el.country_id === this.country_id;
-      });
-    },
-    city_id() {
-      this.setMetroList();
-    }
-  },
-  created() {
-    var self = this;
-    this.loadCountries();
-    this.loadCity();
-    if (this.value) {
-      axios({
-        url: self.$store.state.server + "/api/building/" + this.value,
-        method: "get"
-      }).then(({ data }) => {
-        var {
-          address,
-          chords,
-          desc,
-          photo,
-          price,
-          address,
-          title,
-          type_deal,
-          countroom,
-          metro,
-          active,
-          views,
-          _id,
-          country_id,
-          city_id
-        } = data;
-        this.country_id = country_id._id;
-        this.city_id = city_id._id;
-        this.id = _id;
-        this.address = address;
-        this.desc = desc;
-        this.price = price;
-        if (chords != undefined) {
-          this.cord1 = chords[0];
-          this.cord2 = chords[1];
-        }
-        this.title = title;
-        this.type_deal = type_deal;
-        this.countroom = countroom;
-        console.log(metro);
-        this.metro = metro;
-        this.active = active;
-        this.views = views;
-        this.photo = photo;
-        this.setMetroList();
-      });
-    }
-  },
+	props: ["value"],
+	components: {
+		Map,
+		check
+	},
+	data() {
+		return {
+			countriesList: [],
+			allCity: [],
+			cityCountry: [],
+			metroList: [],
+			id: undefined,
+			country_id: "",
+			city_id: "",
+			created: false,
+			title: "",
+			address: "",
+			cord1: 0,
+			cord2: 0,
+			price: 0,
+			desc: "",
+			photo: [],
+			type_deal: "sale",
+			type: "apartament",
+			countroom: 0,
+			metro: [],
+			views: 0,
+			active: false,
+			file: undefined,
+			coordsFlag: false,
+			countroom: 0,
+			countroomMax: 0,
+			total_area: 0,
+			live_area: 0,
+			kitchen_area: 0,
+			level: 0,
+			levelMax: 0,
+			restroom: false
+		};
+	},
+	computed: {
+		countyName() {
+			let country = this.countriesList.filter(el => {
+				return el._id === this.country_id;
+			})[0];
+			return country ? country.name : "";
+		},
+		CityName() {
+			let country = this.cityCountry.filter(el => {
+				return el._id === this.city_id;
+			})[0];
+			return country ? country.name : "";
+		}
+	},
+	watch: {
+		country_id() {
+			this.cityCountry = this.allCity.filter(el => {
+				return el.country_id === this.country_id;
+			});
+		},
+		city_id() {
+			this.setMetroList();
+		}
+	},
+	created() {
+		var self = this;
+		this.loadCountries();
+		this.loadCity();
+		if (this.value) {
+			axios({
+				url: self.$store.state.server + "/api/building/" + this.value,
+				method: "get"
+			}).then(({ data }) => {
+				var {
+					address,
+					chords,
+					desc,
+					photo,
+					price,
+					address,
+					title,
+					type_deal,
+					type,
+					countroom,
+					metro,
+					active,
+					views,
+					_id,
+					country_id,
+					city_id,
+					countroom,
+					countroomMax,
+					total_area,
+					live_area,
+					kitchen_area,
+					level,
+					levelMax,
+					restroom
+				} = data;
+				this.country_id = country_id._id;
+				this.city_id = city_id._id;
+				this.id = _id;
+				this.address = address;
+				this.desc = desc;
+				this.price = price;
+				if (chords != undefined) {
+					this.cord1 = chords[0];
+					this.cord2 = chords[1];
+				}
+				this.title = title;
+				this.type_deal = type_deal;
+				this.type = type;
+				this.countroom = countroom;
+				this.metro = metro;
+				this.active = active;
+				this.views = views;
+				this.photo = photo;
+				this.countroom = countroom;
+				this.countroomMax = countroomMax;
+				this.total_area = total_area;
+				this.live_area = live_area;
+				this.kitchen_area = kitchen_area;
+				this.level = level;
+				this.levelMax = levelMax;
+				this.restroom = restroom;
+				this.setMetroList();
+			});
+		}
+	},
 
-  methods: {
-    loadCountries() {
-      console.log("loadCountries");
-      axios({
-        url: this.$store.state.server + `/api/countries`
-      })
-        .then(({ data }) => {
-          this.countriesList = data;
-        })
-        .catch(e => {
-          console.log(e);
-        });
-    },
-    loadCity() {
-      axios({
-        url: this.$store.state.server + `/api/city`
-      }).then(({ data }) => {
-        this.allCity = data;
-        this.cityCountry = data;
-      });
-    },
-    setMetroList() {
-      let m = this.allCity.filter(el => {
-        return el._id === this.city_id;
-      })[0];
-      console.log(m);
-      this.metroList = m ? m.metro : [];
-    },
-    fileChange(e) {
-      this.file = e.target.files || e.dataTransfer.files;
-    },
-    baseCreate() {
-      let self = this;
-      let data = {
-        title: this.title,
-        address: this.address,
-        desc: this.desc,
-        cord1: this.cord1,
-        cord2: this.cord2,
-        price: parseInt(this.price),
-        countroom: this.countroom,
-        type_deal: this.type_deal,
-        type: this.type,
-        metro: this.metro,
-        country_id: this.country_id,
-        city_id: this.city_id
-      };
-      axios({
-        url: this.$store.state.server + "/api/building/create",
-        method: "post",
-        data: data,
-        headers: {
-          Authorization: `Bearer ${this.$store.state.userData.token}`
-        }
-      }).then(({ data }) => {
-        if (data._id !== undefined) {
-          this.id = data._id;
-          this.$router.push(`/${data._id}/edit`);
-        }
-      });
-    },
-    async baseEdit() {
-      if (this.country_id == "" || this.city_id == "") {
-        return false;
-      }
-      let data = {
-        _id: this.id,
-        title: this.title,
-        address: this.address,
-        desc: this.desc,
-        cord1: this.cord1,
-        cord2: this.cord2,
-        price: parseInt(this.price),
-        countroom: this.countroom,
-        type_deal: this.type_deal,
-        type: this.type,
-        metro: this.metro,
-        views: this.views,
-        active: this.active,
-        photo: this.photo,
-        country_id: this.country_id,
-        city_id: this.city_id
-      };
-      await axios({
-        method: "put",
-        url:
-          this.$store.state.server +
-          "/api/building/edit/" +
-          this.$route.params.id,
-        data: data,
-        headers: {
-          Authorization: `Bearer ${this.$store.state.userData.token}`
-        }
-      }).then(res => {
-        console.log(data);
-      });
-    },
-    addImage() {
-      let self = this;
-      let formData = new FormData();
-      formData.append("image", this.file[0]);
-      formData.append("id", this.id);
+	methods: {
+		loadCountries() {
+			console.log("loadCountries");
+			axios({
+				url: this.$store.state.server + `/api/countries`
+			})
+				.then(({ data }) => {
+					this.countriesList = data;
+				})
+				.catch(e => {
+					console.log(e);
+				});
+		},
+		loadCity() {
+			axios({
+				url: this.$store.state.server + `/api/city`
+			}).then(({ data }) => {
+				this.allCity = data;
+				this.cityCountry = data;
+			});
+		},
+		setMetroList() {
+			let m = this.allCity.filter(el => {
+				return el._id === this.city_id;
+			})[0];
+			console.log("metor", m);
+			this.metroList = m ? m.metro : [];
+		},
+		fileChange(e) {
+			this.file = e.target.files || e.dataTransfer.files;
+		},
+		baseCreate() {
+			let self = this;
+			let data = {
+				title: this.title,
+				address: this.address,
+				desc: this.desc,
+				cord1: this.cord1,
+				cord2: this.cord2,
+				price: parseInt(this.price),
+				countroom: this.countroom,
+				type_deal: this.type_deal,
+				type: this.type,
+				metro: this.metro,
+				country_id: this.country_id,
+				city_id: this.city_id,
+				countroom: this.countroom,
+				countroomMax: this.countroomMax,
+				total_area: this.total_area,
+				live_area: this.live_area,
+				kitchen_area: this.kitchen_area,
+				level: this.level,
+				levelMax: this.levelMax,
+				restroom: this.restroom
+			};
+			axios({
+				url: this.$store.state.server + "/api/building/create",
+				method: "post",
+				data: data,
+				headers: {
+					Authorization: `Bearer ${this.$store.state.userData.token}`
+				}
+			}).then(({ data }) => {
+				if (data._id !== undefined) {
+					this.id = data._id;
+					this.$router.push(`/${data._id}/edit`);
+				}
+			});
+		},
+		async baseEdit() {
+			if (this.country_id == "" || this.city_id == "") {
+				return false;
+			}
+			let data = {
+				_id: this.id,
+				title: this.title,
+				address: this.address,
+				desc: this.desc,
+				cord1: this.cord1,
+				cord2: this.cord2,
+				price: parseInt(this.price),
+				countroom: this.countroom,
+				type_deal: this.type_deal,
+				type: this.type,
+				metro: this.metro,
+				views: this.views,
+				active: this.active,
+				photo: this.photo,
+				country_id: this.country_id,
+				city_id: this.city_id,
+				countroom: this.countroom,
+				countroomMax: this.countroomMax,
+				total_area: this.total_area,
+				live_area: this.live_area,
+				kitchen_area: this.kitchen_area,
+				level: this.level,
+				levelMax: this.levelMax,
+				restroom: this.restroom
+			};
+			await axios({
+				method: "put",
+				url:
+					this.$store.state.server +
+					"/api/building/edit/" +
+					this.$route.params.id,
+				data: data,
+				headers: {
+					Authorization: `Bearer ${this.$store.state.userData.token}`
+				}
+			}).then(res => {
+				console.log(data);
+			});
+		},
+		addImage() {
+			let self = this;
+			let formData = new FormData();
+			formData.append("image", this.file[0]);
+			formData.append("id", this.id);
 
-      axios
-        .post(
-          self.$store.state.server + "/api/building/upload-image",
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-              Authorization: `Bearer ${this.$store.state.userData.token}`
-            }
-          }
-        )
-        .then(function({ data }) {
-          self.photo.push(data);
-        });
-    },
-    removeImage(i) {
-      axios({
-        method: "post",
-        url: `${this.$store.state.server}/api/building/remove-image`,
-        headers: {
-          Authorization: `Bearer ${this.$store.state.userData.token}`
-        },
-        data: {
-          id: this.id,
-          photo: i
-        }
-      }).then(({ data }) => {
-        this.photo = data;
-      });
-    },
-    getCoords(val) {
-      console.log("getCoords");
-      console.log(val);
+			axios
+				.post(
+					self.$store.state.server + "/api/building/upload-image",
+					formData,
+					{
+						headers: {
+							"Content-Type": "multipart/form-data",
+							Authorization: `Bearer ${
+								this.$store.state.userData.token
+							}`
+						}
+					}
+				)
+				.then(function({ data }) {
+					self.photo.push(data);
+				});
+		},
+		removeImage(i) {
+			axios({
+				method: "post",
+				url: `${this.$store.state.server}/api/building/remove-image`,
+				headers: {
+					Authorization: `Bearer ${this.$store.state.userData.token}`
+				},
+				data: {
+					id: this.id,
+					photo: i
+				}
+			}).then(({ data }) => {
+				this.photo = data;
+			});
+		},
+		getCoords(val) {
+			console.log("getCoords");
+			console.log(val);
 
-      this.cord1 = val[0];
-      this.cord2 = val[1];
-      console.log(this.cord1);
-      console.log("getCoords end");
-    }
-  }
+			this.cord1 = val[0];
+			this.cord2 = val[1];
+			console.log(this.cord1);
+			console.log("getCoords end");
+		}
+	}
 };
 </script>
-<style lang="scss" >
+<style lang="scss" scoped>
+hr {
+	margin: 20px 0;
+}
 label {
-  display: flex;
-  margin-bottom: 10px;
-  b {
-    flex: 0 0 250px;
-    font-size: 14px;
-    margin-right: 20px;
-  }
+	display: flex;
+	margin-bottom: 10px;
+	b {
+		flex: 0 0 250px;
+		font-size: 14px;
+		margin-right: 20px;
+	}
 }
 textarea {
-  background: white;
-  color: black;
-  width: 100%;
-  min-height: 40px;
-  padding: 10px;
+	background: white;
+	color: black;
+	width: 100%;
+	min-height: 40px;
+	padding: 10px;
 }
 .coordinates {
-  margin: 20px 0;
+	margin: 20px 0;
+}
+.fieldset {
+	margin-bottom: 20px;
+	border: 1px solid rgba(0, 0, 0, 0.1);
 }
 </style>

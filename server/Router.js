@@ -31,6 +31,7 @@ module.exports = function(app, db) {
     app.post("/api/building/remove-image", building.removeImage.bind(building));
     // app.post('/api/building/edit/',building.getList.bind(building));
     app.put("/api/building/edit/:id", building.edit.bind(building));
+    app.get("/api/building/user", building.getListUser.bind(building));
     app.get("/api/building/:id", building.getOne.bind(building));
 
     app.get("/api/building", building.getList.bind(building));
@@ -63,6 +64,7 @@ module.exports = function(app, db) {
 
     app.get("/api/users", userC.users.bind(userC));
     app.post("/api/users", userC.create.bind(userC));
+    app.put("/api/users", userC.edit.bind(userC));
     app.get("/admin", function(req, res) {
         res.sendFile(path.resolve("./dist/admin.html"));
         // res.sendFile(__dirname + "/dist/index.html");
