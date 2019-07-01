@@ -2,11 +2,8 @@
     form.p-login(action="/login",@submit="checkForm")
         .p-login__wrap.container
             h2.p-login__title Регистрация 
-            p {{errors}}
-            p {{response}} 
-            div andreybyk9606@gmail.com
             label
-                b Login:
+                b Логин:
                 input.c-input(type="mail",v-model="login")
             label
                 b Пароль
@@ -17,7 +14,7 @@
             label
                 b Возраст:
                 input.c-input(type="number",v-model="age")
-            button.c-btn(type="submit") Создать пользователя
+            button.c-btn(type="submit") Зарегистрироваться
             
 </template>
 <script>

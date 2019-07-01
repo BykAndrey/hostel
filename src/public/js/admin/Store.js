@@ -5,6 +5,15 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
     state: {
-        server: "http://localhost:3000"
+        server: "http://localhost:3000",
+        auth: false
+    },
+    mutations: {
+        login(state) {
+            state.auth = true;
+        },
+        logout(state) {
+            state.auth = false;
+        }
     }
 });

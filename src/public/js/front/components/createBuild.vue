@@ -3,82 +3,101 @@
 		fieldset.fieldset
 			legend(v-if="id") Редактирование
 			legend(v-else) Новое объявление
-			label
-				b Название
-				input.c-input(type="text",v-model="title")
-			label
-				b Тип сделки
-				select.c-select(v-model="type_deal")
-					option(value="rent") Аренда
-					option(value="sale") Продажа
-			label
-				b Тип
-				select.c-select(v-model="type")
-					option(value="apartament") Квартира
-					option(value="room") Комната
-					option(value="house") Дом
-			label
-				b Количество комнат
-				input.c-input(type="number" v-model="countroom")
-			label
-				b Страна
-				select.c-select(v-model="country_id")
-					option(v-for="item in countriesList" :key="item._id" :value="item._id") {{ item.name }}
-			label(v-if="country_id")
-				b Населенный пункт
-				select.c-select(v-model="city_id")
-					option(v-for="item in cityCountry" :key="item._id" :value="item._id") {{ item.name }}
-			label(v-if="city_id")
-				b Метро
-				select.c-select(v-model="metro" multiple)
-					option(v-for="item in metroList" :value="item") {{item}}
-			label
-				b Улица <br> (если в списке нет нужного населенного пунка, то его нужно написать здесь)
-				input.c-input(type="text",v-model="address")
-			label
-				b Цена
-				input.c-input(type="text",v-model="price")
+			label.field
+				.field__title Название
+				.field__value
+					input.c-input(type="text",v-model="title")
+			label.field
+				.field__title Тип сделки
+				.field__value
+					select.c-select(v-model="type_deal")
+						option(value="rent") Аренда
+						option(value="sale") Продажа
+			label.field
+				.field__title Тип
+				.field__value
+					select.c-select(v-model="type")
+						option(value="apartament") Квартира
+						option(value="room") Комната
+						option(value="house") Дом
+			label.field
+				.field__title Количество комнат
+				.field__value
+					input.c-input(type="number" v-model="countroom")
+			label.field
+				.field__title Страна
+				.field__value
+					select.c-select(v-model="country_id")
+						option(v-for="item in countriesList" :key="item._id" :value="item._id") {{ item.name }}
+			label.field(v-if="country_id")
+				.field__title Населенный пункт
+				.field__value
+					select.c-select(v-model="city_id")
+						option(v-for="item in cityCountry" :key="item._id" :value="item._id") {{ item.name }}
+			label.field(v-if="city_id")
+				.field__title Метро
+				.field__value
+					select.c-select(v-model="metro" multiple)
+						option(v-for="item in metroList" :value="item") {{item}}
+			label.field
+				.field__title Улица <br> (если в списке нет нужного населенного пунка, то его нужно написать здесь)
+				.field__value
+					input.c-input(type="text",v-model="address")
+			label.field
+				.field__title Цена
+				.field__value
+					input.c-input(type="text",v-model="price")
 			check(v-model="coordsFlag") Установить координаты в ручную
 			fieldset.fieldset(v-if="coordsFlag")
 				legend Координаты
-				label
-					b Кордината 1
-					input.c-input(type="text",v-model="cord1")
-				label
-					b Кордината 2
-					input.c-input(type="text",v-model="cord2")
+				label.field
+					.field__title Кордината 1
+					.field__value 
+						input.c-input(type="text",v-model="cord1")
+				label.field
+					.field__title Кордината 2
+					.field__value 
+						input.c-input(type="text",v-model="cord2")
 			fieldset.fieldset
 				legend Параметры
-				label
-					b Количество комнат
-					input.c-input(type="text" v-model="countroom") 
-					| /
-					input.c-input(type="text" v-model="countroomMax")
-				label
-					b Этаж
-					input.c-input(type="text" v-model="level") 
-					| /
-					input.c-input(type="text" v-model="levelMax")
-				label
-					b Площадь
-					input.c-input(type="text" v-model="total_area")
-				label
-					b Площадь под сдачу/продажу
-					input.c-input(type="text" v-model="live_area")
-				label
-					b Площадь кухни
-					input.c-input(type="text" v-model="kitchen_area")
-				label
-					b Раздельный санузел
-					input.c-input(type="checkbox" v-model="restroom")
+				label.field 
+					.field__title Количество комнат
+					.field__value 
+						input.c-input(type="text" v-model="countroom") 
+						| /
+						input.c-input(type="text" v-model="countroomMax")
+				label.field 
+					.field__title Этаж
+					.field__value 
+						input.c-input(type="text" v-model="level") 
+						| /
+						input.c-input(type="text" v-model="levelMax")
+				label.field 
+					.field__title Площадь
+					.field__value 
+						input.c-input(type="text" v-model="total_area")
+				label.field 
+					.field__title Площадь под сдачу/продажу
+					.field__value
+						input.c-input(type="text" v-model="live_area")
+				label.field 
+					.field__title Площадь кухни
+					.field__value 
+						input.c-input(type="text" v-model="kitchen_area")
+				label.field 
+					.field__title Раздельный санузел
+					.field__value 
+						input.c-input(type="checkbox" v-model="restroom")
 					
-			label
-				b Описание
-				textarea(v-model="desc")
+			label.field
+				.field__title Описание
+				.field__value
+					textarea(v-model="desc")
 			
-			label
-				b Опубликовано
-				input( type="checkbox" v-model="active")
+			label.field
+				.field__title Опубликовано
+				.field__value
+					input( type="checkbox" v-model="active")
 			button.c-btn(v-if="id==undefined" v-on:click="baseCreate") Создать
 			button.c-btn(v-else v-on:click="baseEdit") Редактировать
 			hr
@@ -378,13 +397,8 @@ export default {
 			});
 		},
 		getCoords(val) {
-			console.log("getCoords");
-			console.log(val);
-
 			this.cord1 = val[0];
 			this.cord2 = val[1];
-			console.log(this.cord1);
-			console.log("getCoords end");
 		}
 	}
 };
@@ -415,5 +429,21 @@ textarea {
 .fieldset {
 	margin-bottom: 20px;
 	border: 1px solid rgba(0, 0, 0, 0.1);
+}
+.field {
+	display: flex;
+	align-items: center;
+	&__title {
+		font-weight: 600;
+		margin-right: 20px;
+	}
+	&__value {
+		display: flex;
+		align-items: center;
+		font-weight: 700;
+		.c-input {
+			flex: 1 0 auto;
+		}
+	}
 }
 </style>

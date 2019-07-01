@@ -14,7 +14,9 @@
 					input.c-input(v-model="inf.phone" type="text")
 			button.c-btn(@click="save" type='submit') Сохранить
 			hr
-			createBuild
+			button.c-btn.p-user__add(v-if="!add" @click="add = true") Добавить объявление
+			button.c-btn.p-user__add(v-if="add" @click="add = false") Закрыть добавление
+			createBuild(v-if="add")
 			hr
 			list-buildings(:list="list")
 
@@ -33,6 +35,7 @@ export default {
 		return {
 			buildigns: [],
 			list: [],
+			add: false,
 			inf: {
 				name: "",
 				phone: ""
@@ -82,6 +85,9 @@ export default {
 };
 </script>
 <style lang="scss">
+.p-user__add {
+	margin: 25px 0;
+}
 fieldset {
 	padding: 20px;
 }
