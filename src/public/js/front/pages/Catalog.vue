@@ -115,7 +115,7 @@ export default {
 			url: self.$store.state.server + "/api/building"
 		})
 			.then(data => {
-				self.items = data.data.data;
+				//self.items = data.data.data;
 				this.allitems = data.data.data;
 			})
 			.catch(function(e) {
@@ -190,7 +190,7 @@ export default {
 			let polygon = this.regionsList.filter(r => {
 				return r.properties.osmId === this.currentRegionId;
 			})[0];
-			return polygon ? polygon : null;
+			return polygon ? polygon : [];
 		}
 	},
 	watch: {
@@ -216,7 +216,7 @@ export default {
 			}
 		},
 		currentCity() {
-			this.regions(this.currentCity ? this.currentCity.osme : null);
+			this.regions(this.currentCity ? this.currentCity.osme : []);
 		},
 		sizePerPage() {
 			this.currentPage = 1;

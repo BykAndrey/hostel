@@ -12,13 +12,18 @@ import about from "./pages/About.vue";
 
 function CheckUser(to, from, next) {
     store.dispatch("GET_COOKIE").then(() => {
-        store.dispatch("CHECK_USER").then(() => {
-            if (store.state.userData) {
-                next("/account");
-            } else {
+        store
+            .dispatch("CHECK_USER")
+            .then(() => {
+                if (store.state.userData) {
+                    next("/account");
+                } else {
+                    next();
+                }
+            })
+            .catch(er => {
                 next();
-            }
-        });
+            });
     });
 }
 let routes = [

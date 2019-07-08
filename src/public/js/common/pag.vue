@@ -15,8 +15,6 @@ export default {
 	},
 	watch: {
 		total_count() {
-			console.log(`totalCount:${this.total_count}`);
-			console.log(`size:${this.size}`);
 			this.total_count =
 				this.total_count === undefined ? 1 : this.total_count;
 			var a = Math.ceil(parseInt(this.total_count) / parseInt(this.size));
@@ -27,7 +25,6 @@ export default {
 		calcPage() {},
 		click(i, ev) {
 			ev.preventDefault();
-			console.log(i);
 			this.$emit("changepage", i);
 		}
 	}

@@ -10,29 +10,28 @@ import axios from "axios";
 import building from "./Building.vue";
 import pag from "./../../common/pag.vue";
 export default {
-  name: "listbuild",
-  props: ["list"],
-  data() {
-    return {
-      list: [],
-      countItems: 5,
-      currentPage: 1,
-      size: 3
-    };
-  },
-  components: {
-    building,
-    pag
-  },
-  created() {
-    this.loadPage();
-  },
+	name: "listbuild",
+	props: ["list"],
+	data() {
+		return {
+			countItems: 5,
+			currentPage: 1,
+			size: 3
+		};
+	},
+	components: {
+		building,
+		pag
+	},
+	created() {
+		this.loadPage();
+	},
 
-  methods: {
-    loadPage() {
-      var self = this;
+	methods: {
+		loadPage() {
+			var self = this;
 
-      /* axios({
+			/* axios({
 				method: "get",
 				url: self.$store.state.server + "/api/building",
 				headers: {
@@ -46,29 +45,28 @@ export default {
 				.then(function(data) {
 					self.list = data.data.data;
 					self.countItems = data.data.count;
-					console.log("self.countItems:" + self.countItems);
+		
 				})
 				.catch(function(e) {
 					console.error(e);
 				});*/
-    },
-    changePage(page, e) {
-      this.currentPage = page >= 0 ? page : 1;
-      console.log(`currentPage: ${this.currentPage}`);
-      this.loadPage();
-    }
-  }
+		},
+		changePage(page, e) {
+			this.currentPage = page >= 0 ? page : 1;
+			this.loadPage();
+		}
+	}
 };
 </script>
 <style lang="scss" scoped>
 .list {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  margin-left: -20px;
-  &__el {
-    width: calc(25% - 20px);
-    margin-left: 20px;
-  }
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-start;
+	margin-left: -20px;
+	&__el {
+		width: calc(25% - 20px);
+		margin-left: 20px;
+	}
 }
 </style>

@@ -9,9 +9,9 @@ var bodyParser = require("body-parser");
 
 const app = express();
 app.use(
-  session({
-    secret: "hotel"
-  })
+    session({
+        secret: "hotel"
+    })
 );
 
 // parse application/json
@@ -23,27 +23,16 @@ app.use(express.static(path.join(__dirname, "/dist")));
 app.use("/static", express.static(path.join(__dirname, "/static")));
 let db = undefined;
 
-/*
-const mongoClient=new MongoClient('mongodb://localhost:27017/',{useNewUrlParser:true});
-mongoClient.connect(function(er,client){
-    if(er){
-        return console.log(er)
-    }
-    db=client;
-    app.listen(3000);
-    client.close();
-});
-*/
 mongoose.connect(
-  "mongodb://localhost:27017/hotel",
-  { useNewUrlParser: true },
-  function(er) {
-    if (er) {
-      return console.log(er);
+    "mongodb://localhost:27017/hotel",
+    { useNewUrlParser: true },
+    function(er) {
+        if (er) {
+            return console.log(er);
+        }
+        //db=client;
+        app.listen(3000);
     }
-    //db=client;
-    app.listen(3000);
-  }
 );
 
 const router = require("./server/Router.js");

@@ -2,7 +2,7 @@
 	.building.container
 		.building__left
 			.building__title {{item.title}} 
-			.address {{item.country_id.name}}, {{item.city_id.name}}, {{item.address}}
+			.address(v-if="item.country_id&&item.city_id.name") {{item.country_id.name}}, {{item.city_id.name}}, {{item.address}}
 			.metro 
 				.item(v-for="met in item.metro") {{met}}	
 			.features
@@ -40,7 +40,7 @@
 					.item__value {{item.restroom ===true?"Да":"Нет"}}
 			
 			.building__desciption {{item.desc}}
-			.user
+			.user(v-if="item.user_id")
 				.user__left
 					.user__title Контакты
 					.user__name {{item.user_id.name}} 

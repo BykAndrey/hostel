@@ -8,10 +8,10 @@ fs.rename(
 );*/
 
 let file = fs.readFile(
-  "C:\\Users\\andre\\AppData\\Local\\Temp\\1.txt",
-  function(error, data) {
-    if (error) throw error; // если возникла ошибка
+    "C:\\Users\\andre\\AppData\\Local\\Temp\\1.txt",
+    function(error, data) {
+        if (error) throw error; // если возникла ошибка
 
-    fs.writeFile("C:\\Users\\andre\\Desktop\\1.txt", data, function(e) {});
-  }
+        fs.writeFile("C:\\Users\\andre\\Desktop\\1.txt", data, function(e) {});
+    }
 );

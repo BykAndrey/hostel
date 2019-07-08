@@ -22,7 +22,7 @@ export default {
 			if (this.builds !== undefined && this.builds !== null) {
 				return this.builds;
 			} else {
-				return null;
+				return [];
 			}
 		},
 		addressComp() {
@@ -32,21 +32,18 @@ export default {
 			if (this.osme) {
 				return this.osme;
 			}
-			return null;
+			return [];
 		}
 	},
 	watch: {
 		addressComp() {
 			this.sendCoords();
-			console.log("addressComp");
+
 			this.getCoordinates()
 				.then(data => {
-					console.log("-");
 					this.setPoint(data);
 				})
-				.catch(() => {
-					console.log("-2");
-				});
+				.catch(() => {});
 		},
 		items() {
 			this.setPoints();
@@ -58,9 +55,7 @@ export default {
 			this.setPoints();
 		}
 	},
-	created() {
-		console.log("created");
-	},
+	created() {},
 
 	mounted() {
 		var self = this;
@@ -89,20 +84,14 @@ export default {
 					}
 				);
 
-				console.log(this.addressComp);
 				if (true) {
-					console.log(this.addressComp);
 					this.getCoordinates()
 						.then(data => {
-							console.log("-");
 							this.setPoint(data);
 						})
-						.catch(() => {
-							console.log("-2");
-						});
-					console.log(this.addressComp);
+						.catch(() => {});
 				}
-				console.log(this.addressComp);
+
 				this.setPoints();
 			});
 		};
@@ -160,7 +149,7 @@ export default {
 			}
 		},
 		setPoints() {
-			if (this.items) {
+			if (this.items && this.map) {
 				this.map.geoObjects.removeAll();
 				let clusterer = new this.ymaps.Clusterer({
 					preset: "islands#invertedVioletClusterIcons",
@@ -169,6 +158,7 @@ export default {
 					clusterHideIconOnBalloonOpen: false,
 					geoObjectHideIconOnBalloonOpen: false
 				});
+
 				let elem = this.items.map((e, id) => {
 					let country = "";
 					let city = "";
@@ -199,20 +189,24 @@ export default {
 						}
 					};
 				});
+
 				let objects = this.ymaps.geoQuery({
 					type: "FeatureCollection",
 					features: elem
 				});
+
 				objects.addEvents(["click", "balloonopen"], e => {
 					let el = e.get("target");
 					this.addEvents();
 				});
-				if (this.polygon) {
+
+				if (this.polygon && this.polygon.geometry) {
 					let Mascoords = this.polygon.geometry.coordinates;
 					let ListPolygons = [];
 					Mascoords.forEach(polCorr => {
 						let coords = polCorr;
 						/**Разварот координат */
+
 						coords = coords.map(el => {
 							return [el[1], el[0]];
 						});
@@ -231,6 +225,7 @@ export default {
 						ListPolygons.push(pol);
 						this.map.geoObjects.add(pol);
 					});
+
 					ListPolygons.forEach(pol => {
 						let inPol = objects.searchInside(pol);
 						this.map.geoObjects.add(
@@ -244,19 +239,17 @@ export default {
 						objects.search('geometry.type == "Point"').clusterize()
 					);
 				}
-				console.log(
-					"this.map.geoObjects.getBounds()",
-					this.map.action.getCurrentState().zoom - 1
-				);
+
 				if (this.map.geoObjects) {
-					this.map.setBounds(this.map.geoObjects.getBounds());
-					let zoom = this.map.action.getCurrentState().zoom;
-					console.log("before", zoom);
-					this.map.setZoom(zoom > 18 ? 18 : zoom);
-					console.log(
-						"after",
-						this.map.action.getCurrentState().zoom
-					);
+					if (this.map.geoObjects.getBounds()) {
+						this.map.setBounds(this.map.geoObjects.getBounds());
+
+						let zoom = this.map.action.getCurrentState().zoom;
+
+						this.map.setZoom(zoom > 18 ? 18 : zoom);
+					} else {
+						this.map.setZoom(5);
+					}
 				}
 			}
 		},
@@ -264,7 +257,6 @@ export default {
 	}
 };
 let a = document.querySelectorAll(".go");
-console.log(a);
 </script>
 <style lang="scss">
 #map {

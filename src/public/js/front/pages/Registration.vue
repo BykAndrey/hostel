@@ -1,21 +1,22 @@
 <template lang="pug">
-    form.p-login(action="/login",@submit="checkForm")
-        .p-login__wrap.container
-            h2.p-login__title Регистрация 
-            label
-                b Логин:
-                input.c-input(type="mail",v-model="login")
-            label
-                b Пароль
-                input.c-input(type="password",v-model="password")
-            label
-                b Имя:
-                input.c-input(type="text",v-model="name")
-            label
-                b Возраст:
-                input.c-input(type="number",v-model="age")
-            button.c-btn(type="submit") Зарегистрироваться
-            
+	form.p-login(action="/login",@submit="checkForm")
+		.p-login__wrap.container
+			h2.p-login__title Регистрация 
+			label
+				b Логин:
+				input.c-input(type="mail",v-model="login")
+			label
+				b Пароль
+				input.c-input(type="password",v-model="password")
+			label
+				b Имя:
+				input.c-input(type="text",v-model="name")
+			label
+				b phone:
+				input.c-input(type="phone",v-model="phone")
+			p.error(v-if="errors") Пользователь с такой почтой уже есть
+			button.c-btn(type="submit") Зарегистрироваться
+			
 </template>
 <script>
 const axios = require("axios");
@@ -24,10 +25,10 @@ export default {
 	name: "login",
 	data() {
 		return {
-			errors: [],
+			errors: null,
 			login: "andreybyk9606@gmail.com",
 			name: "",
-			age: "",
+			phone: "",
 			password: "password",
 			response: "asdf"
 		};
@@ -35,14 +36,12 @@ export default {
 	methods: {
 		checkForm(e) {
 			e.preventDefault();
-
-			var self = this;
-
+			this.errors = null;
 			var data = {
-				mail: self.login,
-				password: self.password,
-				name: self.name,
-				age: self.age
+				mail: this.login,
+				password: this.password,
+				name: this.name,
+				phone: this.phone
 			};
 			axios({
 				method: "post",
@@ -51,14 +50,32 @@ export default {
 					"Content-Type": "application/x-www-form-urlencoded"
 				},
 				data: qs.stringify(data)
-			}).then(function(res) {
-				(self.response = res.data), self.$store.dispatch("sessionUser");
-			});
+			})
+				.then(res => {
+					if (res.data.errors) {
+						this.errors = res.data.errors;
+					} else {
+						this.response = res.data;
+						this.$store.dispatch("sessionUser");
+						this.$router.push("/account");
+					}
+				})
+				.catch(er => {
+					console.error("Error");
+				});
 		},
 		sendForm() {}
 	}
 };
 </script>
 <style lang="scss">
+.c-btn {
+	margin-top: 20px;
+}
+.error {
+	margin: 10px 0;
+	font-size: 14px;
+	color: red;
+}
 </style>
 

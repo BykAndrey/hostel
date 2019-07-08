@@ -20,14 +20,14 @@
         pag(total-count="50",size-page="5",v-on:changepage="pageChange")
 </template>
 <script>
-import Pag from '../common/pag.vue';
-const axios = require('axios');
+import Pag from "../common/pag.vue";
+const axios = require("axios");
 export default {
-    name:'tableList',
-    data(){
-        return{
-            items:[
-              /*  {
+	name: "tableList",
+	data() {
+		return {
+			items: [
+				/*  {
                     name:"Андрей Сергеевич Бык",
                     role:'Администратор',
                     last_log:"20/12/2019",
@@ -42,71 +42,67 @@ export default {
                     role:'Пользователь',
                     last_log:"1/11/2019",
                 }*/
-            ]
-        }
-    },
-    components:{
-        Pag
-    },
-    methods:{
-        pageChange(page){
-            console.log("Current Page:"+page);
-            var self=this;
-            axios.get("/api/users")
-                .then(function(res){
-                    self.items=res.data;
-
-                })
-        }
-    }
-}
+			]
+		};
+	},
+	components: {
+		Pag
+	},
+	methods: {
+		pageChange(page) {
+			var self = this;
+			axios.get("/api/users").then(function(res) {
+				self.items = res.data;
+			});
+		}
+	}
+};
 </script>
 <style lang="scss">
-    .utable{
-        
-        background: white;
-        &__settings{
-            padding: 10px 15px;
-            border-bottom:1px solid rgba(0,0,0,0.1);
-        }
-        &__title{
-            background: white;
-            padding: 10px 15px;
-            font-size: 16px;
-            font-weight: 600;
-            border-bottom: 2px solid rgba(0,0,0,0.1);
-        }
-        &__head{
-            display: flex;
-            justify-content: space-between;
-        }
-        &__tr{
-            display: flex;
-            justify-content: space-between;
-        }
-        &__td,&__th{
-            flex:1 1 auto;
-            background: white;
-            padding: 10px 15px;
-            border-bottom:1px solid rgba(0,0,0,0.1);
-            &:not(:last-child){
-               border-right:1px solid rgba(0,0,0,0.1); 
-            }
-            &:nth-child(1){
-                flex:0 0 40%;
-            }
-             &:nth-child(2){
-                flex:0 0 20%;
-            }
-             &:nth-child(3){
-                flex:0 0 25%;
-            }
-             &:nth-child(4){
-                flex:0 0 15%;
-            }
-             &:nth-child(5){
-                
-            }
-        }
-    }
+.utable {
+	background: white;
+	&__settings {
+		padding: 10px 15px;
+		border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+	}
+	&__title {
+		background: white;
+		padding: 10px 15px;
+		font-size: 16px;
+		font-weight: 600;
+		border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+	}
+	&__head {
+		display: flex;
+		justify-content: space-between;
+	}
+	&__tr {
+		display: flex;
+		justify-content: space-between;
+	}
+	&__td,
+	&__th {
+		flex: 1 1 auto;
+		background: white;
+		padding: 10px 15px;
+		border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+		&:not(:last-child) {
+			border-right: 1px solid rgba(0, 0, 0, 0.1);
+		}
+		&:nth-child(1) {
+			flex: 0 0 40%;
+		}
+		&:nth-child(2) {
+			flex: 0 0 20%;
+		}
+		&:nth-child(3) {
+			flex: 0 0 25%;
+		}
+		&:nth-child(4) {
+			flex: 0 0 15%;
+		}
+		&:nth-child(5) {
+		}
+	}
+}
 </style>

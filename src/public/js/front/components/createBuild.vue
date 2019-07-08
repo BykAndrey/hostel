@@ -247,7 +247,6 @@ export default {
 
 	methods: {
 		loadCountries() {
-			console.log("loadCountries");
 			axios({
 				url: this.$store.state.server + `/api/countries`
 			})
@@ -270,7 +269,6 @@ export default {
 			let m = this.allCity.filter(el => {
 				return el._id === this.city_id;
 			})[0];
-			console.log("metor", m);
 			this.metroList = m ? m.metro : [];
 		},
 		fileChange(e) {
@@ -354,9 +352,7 @@ export default {
 				headers: {
 					Authorization: `Bearer ${this.$store.state.userData.token}`
 				}
-			}).then(res => {
-				console.log(data);
-			});
+			}).then(res => {});
 		},
 		addImage() {
 			let self = this;

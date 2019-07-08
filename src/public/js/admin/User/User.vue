@@ -37,12 +37,10 @@ export default {
 	},
 	methods: {
 		send(e) {
-			console.log("send");
 			e.preventDefault();
 			let self = this;
 
 			if (this.pass === this.pass2) {
-				console.log("send2");
 				let data = {
 					mail: self.mail,
 					name: self.name,
