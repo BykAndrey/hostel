@@ -63,3 +63,17 @@ html {
   border-color: $color;
   height: 35px;
 }
+
+.field {
+  display: flex;
+  &:not(:last-child) {
+    margin-bottom: 10px;
+  }
+  &__title {
+    flex: 0 0 150px;
+    font-size: 14px;
+  }
+  &__value {
+    flex: 1 1 auto;
+  }
+}
