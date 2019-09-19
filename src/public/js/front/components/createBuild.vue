@@ -185,6 +185,9 @@ export default {
     },
     city_id() {
       this.setMetroList();
+    },
+    address() {
+      this.detectMetroByAddress();
     }
   },
   async created() {
@@ -313,15 +316,23 @@ export default {
   },
 
   methods: {
-    defineCoordsByAddress() {},
-    addressInput() {
-      this.$ymaps
-        .suggest(`${this.address}`)
-        .then(function(items) {})
-        .catch(e => {
-          console.error(e);
-        });
+    async detectMetroByAddress() {
+      let list = await this.$ymaps.geocode([0, 0], {
+        /**
+         * Опции запроса
+         * @see https://api.yandex.ru/maps/doc/jsapi/2.1/ref/reference/geocode.xml
+         */
+        // Ищем только станции метро.
+        kind: "metro",
+        // Запрашиваем не более 20 результатов.
+        results: 20
+      });
+      console.log("list", list);
+      list.geoObjects.toArray().forEach(element => {
+        console.log(element.properties.get("name"));
+      });
     },
+
     loadCountries() {
       axios({
         url: this.$store.state.server + `/api/countries`
@@ -470,7 +481,20 @@ export default {
       this.cord1 = event.coords[0];
       this.cord2 = event.coords[1];
       this.address = event.address;
-      console.log(this.address);
+      this.$ymaps.geocode(this.address, {}).then(res => {
+        const ad = res.geoObjects.get(0);
+        console.log(this.address);
+        if (ad) {
+          const list = this.countriesList.filter(e => {
+            console.log(e.iso3166, ad.getCountryCode());
+            return e.iso3166 === ad.getCountryCode();
+          });
+          if (list.length) {
+            this.country_id = list[0]._id;
+          } else {
+          }
+        }
+      });
     }
   }
 };
@@ -532,6 +556,9 @@ textarea {
     margin-left: 20px;
 
     min-width: 0;
+    .c-btn {
+      margin: 0;
+    }
   }
 }
 </style>

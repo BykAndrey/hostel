@@ -95,7 +95,7 @@ export default {
         address: this.address
       });
     },
-    createMap() {
+    async createMap() {
       if (this.$ymaps) {
         let coords = [0, 0];
         if (this.coords && Array.isArray(this.coords)) {
@@ -123,8 +123,11 @@ export default {
           }
         );
         this.point.events.add("dragend", this.handlerDragEnd.bind(this));
-        this.Map.events.add("click", e => {
+        this.Map.events.add("click", async e => {
           this.setPosition(e.get("coords"));
+          this.suggest_address = await this.getAddressFromCoordinates(
+            e.get("coords")
+          );
           this.sendData(e.get("coords"));
         });
         this.Map.geoObjects.add(this.point);
@@ -186,6 +189,9 @@ export default {
   &__title {
     font-size: 14px;
     flex: 1 0 350px;
+  }
+  .c-btn {
+    margin: 0;
   }
 }
 .address {

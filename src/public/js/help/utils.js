@@ -1,9 +1,10 @@
-export function getSimpleAddressFromObject(ad) {
+export function getSimpleAddressFromObject(ad = {}) {
+  console.log(ad);
   let addressFull = "";
   if (ad.country) {
     addressFull += ad.country;
   }
-  if (ad.areas) {
+  if (ad.areas && ad.areas.length) {
     addressFull += ", " + ad.areas.reduce((ac, i) => ", " + i);
   }
   if (ad.locales) {

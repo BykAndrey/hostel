@@ -8,7 +8,6 @@ class Countries {
   getList(req, res) {
     CountriesModel.find({}, (er, docs) => {
       if (er) res.send(er);
-
       res.send(docs);
     });
   }
@@ -18,7 +17,8 @@ class Countries {
       return res.send("no data");
     }
     let el = new CountriesModel({
-      name: req.body.name
+      name: req.body.name,
+      iso3166: req.body.iso3166
     });
     el.save();
     res.send(el);
@@ -58,7 +58,8 @@ class Countries {
   }
   async update(req, res) {
     let data = {
-      name: req.body.name
+      name: req.body.name,
+      iso3166: req.body.iso3166
     };
     if (!req.params.id) {
       return res.send("no");

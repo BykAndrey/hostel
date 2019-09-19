@@ -4,7 +4,8 @@ const Schema = mongoose.Schema;
 
 const Countries = new Schema(
   {
-    name: String
+    name: String,
+    iso3166: String
   },
   {
     timestamps: true

@@ -4,6 +4,7 @@ const MiniCssExractPlugin = require("mini-css-extract-plugin");
 const VueLoaderPlugin = require("vue-loader/lib/plugin");
 
 module.exports = {
+  mode: "development",
   watch: true,
   watchOptions: {
     aggregateTimeout: 100,

@@ -76,4 +76,9 @@ html {
   &__value {
     flex: 1 1 auto;
   }
+  &__error {
+    color: rgba(255, 0, 0, 0.7);
+    margin-top: 5px;
+    font-size: 12px;
+  }
 }
