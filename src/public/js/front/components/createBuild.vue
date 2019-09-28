@@ -50,31 +50,20 @@
 				.field__title Цена
 				.field__value
 					input.c-input(type="text",v-model="price")
-			check(v-model="coordsFlag") Установить координаты в ручную
-			fieldset.fieldset(v-if="coordsFlag")
-				legend Координаты
-				label.field
-					.field__title Кордината 1
-					.field__value 
-						input.c-input(type="text",v-model="cord1")
-				label.field
-					.field__title Кордината 2
-					.field__value 
-						input.c-input(type="text",v-model="cord2")
 			fieldset.fieldset
 				legend Параметры
 				label.field 
 					.field__title Количество комнат
 					.field__value 
-						input.c-input(type="text" v-model="countroom") 
+						input.c-input(type="text" v-model="countroom" @change="e=> this.countroom = minMaxValue(this.countroom, 1, this.countroomMax)") 
 						| /
-						input.c-input(type="text" v-model="countroomMax")
+						input.c-input(type="text" v-model="countroomMax" @change="e=> this.countroomMax = numberValue(this.countroomMax)")
 				label.field 
 					.field__title Этаж
 					.field__value 
-						input.c-input(type="text" v-model="level") 
+						input.c-input(type="text" v-model="level" @change="e=> this.level = minMaxValue(this.level, 1, this.levelMax)") 
 						| /
-						input.c-input(type="text" v-model="levelMax")
+						input.c-input(type="text" v-model="levelMax" @change="e=> this.levelMax = numberValue(this.levelMax)")
 				label.field 
 					.field__title Площадь
 					.field__value 
@@ -150,7 +139,6 @@ export default {
 			views: 0,
 			active: false,
 			file: undefined,
-			coordsFlag: false,
 			countroom: 0,
 			countroomMax: 0,
 			total_area: 0,
@@ -182,6 +170,7 @@ export default {
 				return el.country_id === this.country_id;
 			});
 		},
+		
 	},
 	async created() {
 		var self = this;
@@ -494,6 +483,28 @@ export default {
 					}
 				}
 			});
+		},
+		minMaxValue(value, min, max) {
+			const rightValue = this.numberValue(value,min);
+			if(rightValue < this.numberValue(min)) {
+				return this.numberValue(min);
+			}
+			if(rightValue > this.numberValue(max)){
+				return this.numberValue(max)
+			}
+			return rightValue;
+		},
+		numberValue(value,defaultValue) {
+			if(value && value !==' ' && value !=='') {
+				const numbersValue = value.toString().replace(/[^\d]/gi,'');
+				if(numbersValue!=''){
+					const count = parseInt(numbersValue);
+					return count ? count : 1;
+				}
+				return 1;
+			} else {
+				return defaultValue? defaultValue: 1;
+			}
 		}
 	}
 };
