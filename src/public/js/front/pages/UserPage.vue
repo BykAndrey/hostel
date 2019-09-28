@@ -7,11 +7,13 @@
 				.field__title ФИО
 				.field__value 
 					input.c-input(v-model="inf.name" type="text")
+					.field__error(v-if="errors.name") {{errors.name}}
 
 			.field
 				.field__title Телефон
 				.field__value 
 					input.c-input(v-model="inf.phone" type="text")
+					.field__error(v-if="errors.phone") {{errors.phone}}
 			button.c-btn(@click="save" type='submit') Сохранить
 			hr
 			button.c-btn.p-user__add(v-if="!add" @click="add = true") Добавить объявление
@@ -36,6 +38,7 @@ export default {
       buildigns: [],
       list: [],
       add: false,
+      errors: {},
       inf: {
         name: "",
         phone: ""
@@ -72,6 +75,16 @@ export default {
   },
   methods: {
     save() {
+      this.errors = {};
+      if (this.inf.name.length === 0) {
+        this.errors.name = "Заполните имя";
+      }
+      if (this.inf.phone.length === 0) {
+        this.errors.phone = "Заполните телефон";
+      }
+      if (Object.key(this.errors).length) {
+        return false;
+      }
       axios({
         method: "put",
         url: this.$store.state.server + "/api/users",

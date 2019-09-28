@@ -10,15 +10,15 @@
 			.prop
 				router-link.el-building__title(:to="'/'+el._id") {{el.title}} 
 			
-			.prop 
-				p Тип жилья: {{ typeBuild }}
-				p Тип сделки {{ typeDeal }}
+			.prop.el-building__types 
+				div {{ typeBuild }}
+				div {{ typeDeal }}
 			.prop
 				.el-building__address(:title="fullAddress") {{ address }}
-			.prop(v-if="el.metro && el.metro.length > 0")
+			.prop(v-if="el.metro_auto && el.metro_auto.length > 0")
 				ul.el-building__metro
-					template(v-for="item in el.metro")
-						li(v-if="item!=='no'") {{item}}
+					li() {{el.metro_auto[0].name}}
+					li(v-if="el.metro_auto.length > 1") +{{el.metro_auto.length - 1}}
 		router-link.c-btn.el-building__details(:to="'/'+el._id") Подробнее
 		router-link.c-btn.el-building__edit(v-if="user" :to="'/'+el._id+'/edit'") Редактировать
 </template>
@@ -73,9 +73,7 @@ export default {
       return `${this.el.city_id.name}  ${this.el.address}`;
     },
     fullAddress() {
-      return `${this.el.country_id.name}  ${this.el.city_id.name}  ${
-        this.el.address
-      }`;
+      return `${this.el.country_id.name}  ${this.el.city_id.name}  ${this.el.address}`;
     }
   },
   created() {}
@@ -90,15 +88,22 @@ export default {
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15), 0 2px 3px rgba(0, 0, 0, 0.2);
   transition-duration: 0.3s;
   overflow: hidden;
-  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
   &:hover {
     box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.15),
       0 2px 3px rgba(0, 0, 0, 0.2);
   }
+  .prop {
+    padding: 7px 15px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
   &__photo {
     height: 150px;
     .image {
-      object-fit: contain;
+      background: center/cover no-repeat;
       width: 100%;
       height: 150px;
     }
@@ -110,16 +115,17 @@ export default {
   &__head {
     //padding: 10px;
     border-top: 1px solid rgba(0, 0, 0, 0.2);
-    .prop {
-      padding: 7px 15px;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    }
+    flex: 1 0 auto;
   }
   &__title {
     font-size: 15px;
     font-family: Arial, Helvetica, sans-serif;
     color: #333333;
     display: block;
+    height: 16px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
   &__price {
     top: 0;
@@ -163,8 +169,9 @@ export default {
   }
   &__metro {
     margin-top: 10px;
+    max-height: 23px;
     li {
-      font-size: 11px;
+      font-size: 12px;
       list-style: none;
       display: inline-block;
       margin: 0 3px 3px 0;
@@ -176,6 +183,25 @@ export default {
   &__edit {
     border-radius: 0;
     font-size: 12px;
+    margin-top: 5px;
+  }
+  &__types {
+    display: flex;
+    padding: 0;
+    &.prop {
+      padding: 0;
+    }
+    div {
+      flex: 0 0 50%;
+      padding: 7px 15px;
+      font-size: 14px;
+      text-align: center;
+      font-weight: 600;
+
+      &:first-child {
+        border-right: 1px solid rgba(0, 0, 0, 0.1);
+      }
+    }
   }
 }
 </style>

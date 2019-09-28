@@ -1,28 +1,22 @@
 <template lang="pug">
-    fieldset.map
-      legend Адрес
-      .map__left
-        
-        label.field
-          b.field__title Автоматически определять точку на карте
-          input(type="checkbox" v-model="autoDetectCoordinates")
-        label.field
-          b.field__title Адрес
-          .field__value
-            input.c-input(id='suggest-address',v-model='address' multiline @input="handlerAddressInput" @change="e=> handlerAddressChange(autoDetectCoordinates)")
-            p(v-if="!autoDetectCoordinates") Введите адрес и нажмите "Показать на карте"
-            button.c-btn(v-if="!autoDetectCoordinates" @click ="handlerShowAtMap") Показать на карте
-        p.address 
-          b {{address}}
-        
-        fieldset.suggest-list(v-if="suggest_address.length")
-          legend Возможно эти адреса Вам подходят
-          .item(v-for="item in suggest_address")
-            .item__title {{getAddressString(item)}}
-            .item__btn
-              button.c-btn(@click="setAddress(item)") Применить
-      .map__right
-        #map
+		fieldset.map
+			legend Адрес
+			label.field
+				b.field__title Автоматически определять точку на карте
+				input(type="checkbox" v-model="autoDetectCoordinates")
+			label.field
+				b.field__title Адрес
+				.field__value
+					input.c-input(id='suggest-address',v-model='address' multiline @input="handlerAddressInput" @change="e=> handlerAddressChange(autoDetectCoordinates)")
+					p(v-if="!autoDetectCoordinates") Введите адрес и нажмите "Показать на карте"
+					button.c-btn(v-if="!autoDetectCoordinates" @click ="handlerShowAtMap") Показать на карте       
+			fieldset.suggest-list(v-if="suggest_address.length")
+				legend Возможно эти адреса Вам подходят
+				.item(v-for="item in suggest_address")
+					.item__title {{getAddressString(item)}}
+					.item__btn
+						button.c-btn(@click="setAddress(item)") Применить
+			#map
 
 </template>
 <script>
@@ -47,9 +41,7 @@ export default {
     suggestView: null,
     autoDetectCoordinates: true
   }),
-  watch: {
-    address(val) {}
-  },
+  watch: {},
   mounted() {
     this.createMap();
   },
@@ -76,12 +68,13 @@ export default {
         this.suggestView.destroy();
         this.suggestView = null;
       }
-
+      let coords = this.coords;
       if (detect) {
-        const coords = await this.getCoordinatesFromAddress(this.address);
+        coords = await this.getCoordinatesFromAddress(this.address);
         this.Map.setCenter(coords, 15);
       }
-      this.sendData();
+      console.log("address Changed");
+      this.sendData(coords);
     },
     async handlerDragEnd(event) {
       this.suggest_address = await this.getAddressFromCoordinates(
@@ -171,16 +164,23 @@ export default {
 <style lang="scss" scoped>
 .map {
   display: flex;
+  margin-bottom: 30px;
   &__left {
     flex: 0 0 600px;
   }
   &__right {
     flex: 1 0 auto;
   }
+  .c-input {
+    width: 100%;
+  }
 }
-#new-map {
+#map {
+  margin-top: 30px;
   height: 500px;
   width: 100%;
+}
+#new-map {
 }
 .suggest-list .item {
   display: flex;
