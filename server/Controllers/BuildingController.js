@@ -1,9 +1,9 @@
-var formidable = require("formidable");
-var fs = require("fs");
-var path = require("path");
-var mv = require("mv");
-const BuildingModel = require("./../Models/Base.js").Building;
-const userLib = require("../lib/user.js");
+var formidable = require('formidable');
+var fs = require('fs');
+var path = require('path');
+var mv = require('mv');
+const BuildingModel = require('./../Models/Base.js').Building;
+const userLib = require('../lib/user.js');
 
 class Building {
 	constructor(db) {
@@ -15,11 +15,11 @@ class Building {
 		BuildingModel.findOne({
 			_id: req.params.id
 		})
-			.populate("user_id")
-			.populate("country_id")
-			.populate("city_id")
+			.populate('user_id')
+			.populate('country_id')
+			.populate('city_id')
 			.exec(function(er, data) {
-				if (er) return res.status(404).send("Not Found");
+				if (er) return res.status(404).send('Not Found');
 				return res.status(200).send(data);
 			});
 	}
@@ -35,10 +35,10 @@ class Building {
 		const query = req.query;
 		let findParams = {};
 
-		if (query.country_id && query.country_id !== "all") {
+		if (query.country_id && query.country_id !== 'all') {
 			findParams.country_id = query.country_id;
 		}
-		if (query.city_id && query.city_id !== "all") {
+		if (query.city_id && query.city_id !== 'all') {
 			findParams.city_id = query.city_id;
 		}
 		if (
@@ -47,16 +47,22 @@ class Building {
 		) {
 			findParams.price = {};
 			if (query.minprice) {
-				findParams.price.$gte = query.minprice;
+				findParams.price = {
+					...findParams.price,
+					$gte: query.minprice
+				};
 			}
 			if (query.minprice) {
-				findParams.price.$lte = query.maxprice;
+				findParams.price.$lte = {
+					...findParams.price,
+					$lte: query.maxprice
+				};
 			}
 		}
-		if (query.dealType && query.dealType !== "all") {
+		if (query.dealType && query.dealType !== 'all') {
 			findParams.type_deal = query.dealType;
 		}
-		if (query.houseType && query.houseType !== "all") {
+		if (query.houseType && query.houseType !== 'all') {
 			findParams.type = query.houseType;
 		}
 		if (query.active !== undefined && query.active !== null) {
@@ -64,27 +70,27 @@ class Building {
 		}
 		if (
 			query.countRoom &&
-			query.countRoom !== "all" &&
-			query.countRoom !== "4+"
+			query.countRoom !== 'all' &&
+			query.countRoom !== '4+'
 		) {
 			findParams.countroom = parseInt(query.countRoom);
-		} else if (query.countRoom === "4+") {
+		} else if (query.countRoom === '4+') {
 			findParams.countroom.$gte = 4;
 		}
 		let queryBuild = BuildingModel.find(findParams)
-			.populate("user_id")
-			.populate("country_id")
-			.populate("city_id");
+			.populate('user_id')
+			.populate('country_id')
+			.populate('city_id');
 		if (page !== -1) {
 			queryBuild = queryBuild.skip(skip).limit(size);
 		}
-		if (query.sort && query.sort !== "date:desc") {
-			const arr = query.sort.split(":");
+		if (query.sort && query.sort !== 'date:desc') {
+			const arr = query.sort.split(':');
 			const field = arr[0];
 			const value = arr[1];
 			queryBuild.sort({ [field]: value });
 		} else {
-			queryBuild.sort({ updatedAt: "desc" });
+			queryBuild.sort({ updatedAt: 'desc' });
 		}
 		queryBuild.exec(function(error, data) {
 			if (error) {
@@ -94,13 +100,17 @@ class Building {
 				if (er2) {
 					return res.send(er2);
 				}
-				res.header("Cache-Control", "no-cache, no-store, must-revalidate");
-				res.header("Pragma", "no-cache");
-				res.header("Expires", 0);
-				res.header("Access-Control-Allow-Origin", "*");
+				res.header(
+					'Cache-Control',
+					'no-cache, no-store, must-revalidate'
+				);
+				res.header('Pragma', 'no-cache');
+				res.header('Expires', 0);
+				res.header('Access-Control-Allow-Origin', '*');
 				data = data.sort((a, b) => {
 					if (
-						new Date(a.updatedAt).getTime() > new Date(b.updatedAt).getTime()
+						new Date(a.updatedAt).getTime() >
+						new Date(b.updatedAt).getTime()
 					) {
 						return -1;
 					} else {
@@ -126,9 +136,9 @@ class Building {
 			return res.sendStatus(401);
 		}
 		BuildingModel.find({ user_id: user._id })
-			.populate("user_id")
-			.populate("country_id")
-			.populate("city_id")
+			.populate('user_id')
+			.populate('country_id')
+			.populate('city_id')
 			.exec(function(error, data) {
 				if (error) {
 					return res.send(error);
@@ -139,7 +149,8 @@ class Building {
 					}
 					data = data.sort((a, b) => {
 						if (
-							new Date(a.updatedAt).getTime() > new Date(b.updatedAt).getTime()
+							new Date(a.updatedAt).getTime() >
+							new Date(b.updatedAt).getTime()
 						) {
 							return -1;
 						} else {
@@ -154,7 +165,7 @@ class Building {
 			});
 	}
 	async create(req, res) {
-		res.header("Access-Control-Allow-Origin", "*");
+		res.header('Access-Control-Allow-Origin', '*');
 		// = req.session.user_id;
 		/*
 		if (user_id === undefined) {
@@ -170,7 +181,7 @@ class Building {
 		if (!user) {
 			return res.sendStatus(401);
 		}
-		console.log("user", user);
+		console.log('user', user);
 		var user_id = user._id;
 		let price = req.body.price;
 		let data = {
@@ -214,9 +225,10 @@ class Building {
 			fs.readFile(files.image.path, function(error, data) {
 				if (error) throw error; // если возникла ошибка
 
-				let newName = Date.now() + "." + files.image.name.split(".")[1];
-				let imagePath = "/static/images/" + newName;
-				var newpath = path.join(__dirname, "./../../static/images/") + newName;
+				let newName = Date.now() + '.' + files.image.name.split('.')[1];
+				let imagePath = '/static/images/' + newName;
+				var newpath =
+					path.join(__dirname, './../../static/images/') + newName;
 				fs.writeFile(newpath, data, function(e) {
 					BuildingModel.findOne({ _id: id }, function(error1, data) {
 						var photos = data.photo;
@@ -253,9 +265,11 @@ class Building {
 			if (er) return res.send(er);
 
 			let photo = data.photo.filter(el => {
-				let res = el._id + "" !== indexPhoto;
+				let res = el._id + '' !== indexPhoto;
 				if (!res) {
-					fs.unlink(path.join(__dirname, "../../" + el.url), function(er) {
+					fs.unlink(path.join(__dirname, '../../' + el.url), function(
+						er
+					) {
 						console.error(er);
 					});
 				}
@@ -284,7 +298,7 @@ class Building {
 	}
 
 	async edit(req, res) {
-		res.header("Access-Control-Allow-Origin", "*");
+		res.header('Access-Control-Allow-Origin', '*');
 		// var user_id = req.session.user_id;
 		/** */
 		let key = userLib.getToken(req);
@@ -300,7 +314,7 @@ class Building {
 		let user_id = user._id;
 		/** */
 		let price = req.body.price;
-		console.log("edit", user_id);
+		console.log('edit', user_id);
 		let data = {
 			user_id: user_id,
 			address: req.body.address,
@@ -327,7 +341,7 @@ class Building {
 			restroom: req.body.restroom,
 			metro_auto: req.body.metro_auto
 		};
-		console.log("edit", data);
+		console.log('edit', data);
 		BuildingModel.update({ _id: req.body._id }, { $set: data }, function(
 			er,
 			data
@@ -337,7 +351,7 @@ class Building {
 		});
 	}
 	delete(req, res) {
-		return res.status(200).send("Delete");
+		return res.status(200).send('Delete');
 	}
 }
 module.exports = Building;

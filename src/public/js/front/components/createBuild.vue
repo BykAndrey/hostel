@@ -23,10 +23,6 @@
 								option(value="room") Комната
 								option(value="house") Дом
 					label.field
-						.field__title Количество комнат
-						.field__value
-							input.c-input(type="number" v-model="countroom")
-					label.field
 						.field__title Страна
 						.field__value
 							select.c-select(v-model="country_id")
@@ -47,9 +43,9 @@
 							span {{address}}
 			NewMap(v-if="cord1&&cord2" :coords="[cord1,cord2]" :init_address="address" @get_address="handlerGetAddress")
 			label.field
-				.field__title Цена
+				.field__title Цена (USD)
 				.field__value
-					input.c-input(type="text",v-model="price")
+					input.c-input(type="text",:value="price | numberFilter" @change="e=>price=e.target.value")
 			fieldset.fieldset
 				legend Параметры
 				label.field 
@@ -57,29 +53,30 @@
 					.field__value 
 						input.c-input(type="text" v-model="countroom" @change="e=> this.countroom = minMaxValue(this.countroom, 1, this.countroomMax)") 
 						| /
-						input.c-input(type="text" v-model="countroomMax" @change="e=> this.countroomMax = numberValue(this.countroomMax)")
+						input.c-input(type="text" v-model="countroomMax" @change="e=> this.countroomMax = numberValue(this.countroomMax, 1)")
 				label.field 
 					.field__title Этаж
 					.field__value 
 						input.c-input(type="text" v-model="level" @change="e=> this.level = minMaxValue(this.level, 1, this.levelMax)") 
 						| /
-						input.c-input(type="text" v-model="levelMax" @change="e=> this.levelMax = numberValue(this.levelMax)")
+						input.c-input(type="text" v-model="levelMax" @change="e=> this.levelMax = numberValue(this.levelMax,1)")
 				label.field 
-					.field__title Площадь
+					.field__title Площадь(м.кв.)
 					.field__value 
-						input.c-input(type="text" v-model="total_area")
+						input.c-input(type="text" :value="total_area | numberFilter" @change="e=>total_area=e.target.value")
 				label.field 
-					.field__title Площадь под сдачу/продажу
+					.field__title Площадь под сдачу/продажу (м.кв.)
 					.field__value
-						input.c-input(type="text" v-model="live_area")
+						input.c-input(type="text" :value="live_area | numberFilter" @change="e=>live_area=e.target.value")
 				label.field 
-					.field__title Площадь кухни
+					.field__title Площадь кухни (м.кв.)
 					.field__value 
-						input.c-input(type="text" v-model="kitchen_area")
+						input.c-input(type="text" :value="kitchen_area | numberFilter" @change="e=>kitchen_area=e.target.value")
 				label.field 
 					.field__title Раздельный санузел
 					.field__value 
-						input.c-input(type="checkbox" v-model="restroom")
+						div
+							input.c-input(type="checkbox" v-model="restroom")
 					
 			label.field
 				.field__title Описание
@@ -110,6 +107,7 @@ import NewMap from "./../components/newmap.vue";
 import check from "../components/check.vue";
 import { Promise } from "q";
 import { getSimpleAddressFromObject } from "./../../help/utils";
+import { parse } from "babylon";
 export default {
 	props: ["value"],
 	components: {
@@ -135,17 +133,17 @@ export default {
 			photo: [],
 			type_deal: "sale",
 			type: "apartament",
-			countroom: 0,
+			countroom: 1,
 			views: 0,
 			active: false,
 			file: undefined,
-			countroom: 0,
-			countroomMax: 0,
-			total_area: 0,
-			live_area: 0,
-			kitchen_area: 0,
-			level: 0,
-			levelMax: 0,
+			countroom: 1,
+			countroomMax: 1,
+			total_area: 1,
+			live_area: 1,
+			kitchen_area: 1,
+			level: 1,
+			levelMax: 1,
 			restroom: false,
 			metro_auto: []
 		};
@@ -169,8 +167,7 @@ export default {
 			this.cityCountry = this.allCity.filter(el => {
 				return el.country_id === this.country_id;
 			});
-		},
-		
+		}
 	},
 	async created() {
 		var self = this;
@@ -205,7 +202,7 @@ export default {
 					level,
 					levelMax,
 					restroom,
-					metro_auto,
+					metro_auto
 				} = data;
 				this.country_id = country_id._id;
 				this.city_id = city_id._id;
@@ -293,7 +290,16 @@ export default {
 				});
 		}
 	},
-
+	filters: {
+		numberFilter: function(value) {
+			console.log(value);
+			let v = value.toString().replace(/[^\d.,]/gi, "");
+			console.log(v);
+			v = v === "" ? 0 : parseInt(v);
+			console.log(v);
+			return v;
+		}
+	},
 	methods: {
 		async detectMetroByAddress() {
 			const addressCoords = [this.cord1, this.cord2];
@@ -303,16 +309,15 @@ export default {
 			this.metro_auto = [];
 			list.geoObjects.toArray().forEach(element => {
 				const Metro = element;
-				
+
 				this.$ymaps
 					.route([addressCoords, Metro.geometry.getCoordinates()])
 					.then(route => {
-						
-						if(route.getLength() < 2000) {
+						if (route.getLength() < 2000) {
 							this.metro_auto.push({
-								name: Metro.properties.get('name'),
+								name: Metro.properties.get("name"),
 								length: (route.getLength() / 1000).toFixed(1)
-							})
+							});
 						}
 						console.log(
 							Metro.properties.get("name"),
@@ -462,16 +467,19 @@ export default {
 			});
 		},
 		handlerGetAddress(event) {
-			if (event.coords[0]!== this.cord1 || event.coords[1]!== this.cord2 ) {
+			if (
+				event.coords[0] !== this.cord1 ||
+				event.coords[1] !== this.cord2
+			) {
 				this.cord1 = event.coords[0];
 				this.cord2 = event.coords[1];
 				this.detectMetroByAddress();
 			}
-			
+
 			this.address = event.address;
 			this.$ymaps.geocode(this.address, {}).then(res => {
 				const ad = res.geoObjects.get(0);
-				
+
 				if (ad) {
 					const list = this.countriesList.filter(e => {
 						console.log(e.iso3166, ad.getCountryCode());
@@ -485,25 +493,25 @@ export default {
 			});
 		},
 		minMaxValue(value, min, max) {
-			const rightValue = this.numberValue(value,min);
-			if(rightValue < this.numberValue(min)) {
+			const rightValue = this.numberValue(value, min);
+			if (min && rightValue < this.numberValue(min)) {
 				return this.numberValue(min);
 			}
-			if(rightValue > this.numberValue(max)){
-				return this.numberValue(max)
+			if (max && rightValue > this.numberValue(max)) {
+				return this.numberValue(max);
 			}
 			return rightValue;
 		},
-		numberValue(value,defaultValue) {
-			if(value && value !==' ' && value !=='') {
-				const numbersValue = value.toString().replace(/[^\d]/gi,'');
-				if(numbersValue!=''){
+		numberValue(value, defaultValue) {
+			if (value && value !== " " && value !== "") {
+				const numbersValue = value.toString().replace(/[^\d]/gi, "");
+				if (numbersValue != "") {
 					const count = parseInt(numbersValue);
 					return count ? count : 1;
 				}
 				return 1;
 			} else {
-				return defaultValue? defaultValue: 1;
+				return defaultValue ? defaultValue : 1;
 			}
 		}
 	}
@@ -511,62 +519,62 @@ export default {
 </script>
 <style lang="scss" scoped>
 hr {
-  margin: 20px 0;
+	margin: 20px 0;
 }
 label {
-  display: flex;
-  margin-bottom: 10px;
-  b {
-    flex: 0 0 250px;
-    font-size: 14px;
-    margin-right: 20px;
-  }
+	display: flex;
+	margin-bottom: 10px;
+	b {
+		flex: 0 0 250px;
+		font-size: 14px;
+		margin-right: 20px;
+	}
 }
 textarea {
-  background: white;
-  color: black;
-  width: 100%;
-  min-height: 40px;
-  padding: 10px;
+	background: white;
+	color: black;
+	width: 100%;
+	min-height: 40px;
+	padding: 10px;
 }
 .coordinates {
-  margin: 20px 0;
+	margin: 20px 0;
 }
 .fieldset {
-  margin-bottom: 20px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+	margin-bottom: 20px;
+	border: 1px solid rgba(0, 0, 0, 0.1);
 }
 .field {
-  display: flex;
-  align-items: center;
-  &__title {
-    font-weight: 600;
-    margin-right: 20px;
-  }
-  &__value {
-    display: flex;
-    align-items: center;
-    font-weight: 700;
-    .c-input {
-      flex: 1 0 auto;
-    }
-  }
+	display: flex;
+	align-items: center;
+	&__title {
+		font-weight: 600;
+		margin-right: 20px;
+	}
+	&__value {
+		display: flex;
+		align-items: center;
+		font-weight: 700;
+		.c-input {
+			flex: 1 0 auto;
+		}
+	}
 }
 .address-block {
 }
 .create-build {
-  .field {
-    width: 100%;
-  }
+	.field {
+		width: 100%;
+	}
 }
 .metro-item {
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 4px;
-  font-size: 14px;
-  padding: 5px 10px;
-  display: inline-block;
-  margin-right: 10px;
-  margin-bottom: 10px;
-  background: white;
+	border: 1px solid rgba(0, 0, 0, 0.1);
+	border-radius: 4px;
+	font-size: 14px;
+	padding: 5px 10px;
+	display: inline-block;
+	margin-right: 10px;
+	margin-bottom: 10px;
+	background: white;
 }
 </style>
