@@ -73,7 +73,6 @@ export default {
         coords = await this.getCoordinatesFromAddress(this.address);
         this.Map.setCenter(coords, 15);
       }
-      console.log("address Changed");
       this.sendData(coords);
     },
     async handlerDragEnd(event) {
@@ -94,7 +93,6 @@ export default {
         if (this.coords && Array.isArray(this.coords)) {
           coords = this.coords;
         }
-        console.log(this.init_address);
         this.address = this.init_address;
         const { Map, Placemark } = this.$ymaps;
         this.Map = new Map(

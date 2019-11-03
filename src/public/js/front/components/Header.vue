@@ -43,7 +43,6 @@ export default {
 					self.$store.commit("removeUserData");
 				})
 				.catch(function(er) {
-					console.log(er);
 				});
 		}
 	}

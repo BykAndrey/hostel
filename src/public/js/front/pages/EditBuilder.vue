@@ -1,14 +1,13 @@
 <template lang="pug">
-    .container 
-        p Edit {{$route.params.id}}
+    .container
         createBuild(:value="$route.params.id")
 </template>
 <script>
 import createBuild from "./../components/createBuild.vue";
 export default {
-  components: {
-    createBuild
-  }
+	components: {
+		createBuild
+	}
 };
 </script>
 

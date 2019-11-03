@@ -69,7 +69,6 @@ export default {
 		},
 		isWorkCircle() {
 			this.workCoords = this.map.getCenter();
-			//console.log("center", this.workCoords);
 			this.setPoints();
 		}
 	},
@@ -168,7 +167,6 @@ export default {
 			work.events.add("dragend", () => {
 				this.workCoords = work.geometry.getCoordinates();
 				this.setPoints();
-				console.log("dragEnd");
 			});
 			this.map.geoObjects.add(work);
 		},

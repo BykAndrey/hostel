@@ -62,8 +62,8 @@
 						.item__title Сортировать по
 						.item__value
 							select.c-select(v-model="sortBy")
-								option(value="date:desc") Дате: сначала новые
-								option(value="date:asc") Дате: сначала старые
+								option(value="updatedAt:asc") Дате: сначала новые
+								option(value="updatedAt:desc") Дате: сначала старые
 								option(value="price:asc") Цена: сначала дешевые
 								option(value="price:desc") Цена: сначала дорогие
 
@@ -94,7 +94,7 @@ export default {
 	},
 	data() {
 		return {
-			sortBy: "date:desc",
+			sortBy: "updatedAt:asc",
 			countriesList: [],
 			countryId: "all",
 			citiesList: [],

@@ -1,12 +1,14 @@
 <template lang="pug">
-    aside.sidebar
-        .sidebar__title Навигация
-        .sidebar__wrap
-            ul.sidebar__list
-                li.sidebar__item()
-                    router-link(to="/countries") Страны
-                li.sidebar__item()
-                    router-link(to="/city") Города
+	aside.sidebar
+		.sidebar__title Навигация
+		.sidebar__wrap
+			ul.sidebar__list
+				li.sidebar__item()
+					router-link(to="/countries") Страны
+				li.sidebar__item()
+					router-link(to="/city") Города
+				li.sidebar__item()
+					router-link(to="/builds") Объявления
 </template>
 <script>
 export default {

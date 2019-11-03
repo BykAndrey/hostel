@@ -11,7 +11,6 @@ class Building {
 	}
 
 	getOne(req, res) {
-		console.log(req.params.id);
 		BuildingModel.findOne({
 			_id: req.params.id
 		})
@@ -77,6 +76,11 @@ class Building {
 		} else if (query.countRoom === '4+') {
 			findParams.countroom.$gte = 4;
 		}
+		if (query.moderated && query.moderated !== 'all') {
+			findParams.moderated = parseInt(query.moderated);
+		} else if (!query.moderated) {
+			findParams.moderated = 0;
+		}
 		let queryBuild = BuildingModel.find(findParams)
 			.populate('user_id')
 			.populate('country_id')
@@ -84,7 +88,7 @@ class Building {
 		if (page !== -1) {
 			queryBuild = queryBuild.skip(skip).limit(size);
 		}
-		if (query.sort && query.sort !== 'date:desc') {
+		if (query.sort && query.sort !== 'updatedAt:desc') {
 			const arr = query.sort.split(':');
 			const field = arr[0];
 			const value = arr[1];
@@ -92,6 +96,7 @@ class Building {
 		} else {
 			queryBuild.sort({ updatedAt: 'desc' });
 		}
+
 		queryBuild.exec(function(error, data) {
 			if (error) {
 				return res.send(error);
@@ -181,7 +186,6 @@ class Building {
 		if (!user) {
 			return res.sendStatus(401);
 		}
-		console.log('user', user);
 		var user_id = user._id;
 		let price = req.body.price;
 		let data = {
@@ -207,7 +211,8 @@ class Building {
 			level: req.body.level,
 			levelMax: req.body.levelMax,
 			restroom: req.body.restroom,
-			metro_auto: req.body.metro_auto
+			metro_auto: req.body.metro_auto,
+			moderated: 1
 		};
 
 		var b = new BuildingModel(data);
@@ -275,7 +280,6 @@ class Building {
 				}
 				return res;
 			});
-			console.log(`${data.photo.length}=${photo.length}`);
 			BuildingModel.update(
 				{
 					_id: idbuild
@@ -314,7 +318,6 @@ class Building {
 		let user_id = user._id;
 		/** */
 		let price = req.body.price;
-		console.log('edit', user_id);
 		let data = {
 			user_id: user_id,
 			address: req.body.address,
@@ -339,9 +342,9 @@ class Building {
 			level: req.body.level,
 			levelMax: req.body.levelMax,
 			restroom: req.body.restroom,
-			metro_auto: req.body.metro_auto
+			metro_auto: req.body.metro_auto,
+			moderated: 1
 		};
-		console.log('edit', data);
 		BuildingModel.update({ _id: req.body._id }, { $set: data }, function(
 			er,
 			data
@@ -352,6 +355,16 @@ class Building {
 	}
 	delete(req, res) {
 		return res.status(200).send('Delete');
+	}
+	changeStatus(req, res) {
+		BuildingModel.update(
+			{ _id: req.body._id },
+			{ $set: { moderated: req.body.value } },
+			function(er, data) {
+				if (er) return res.send(er);
+				return res.send(data);
+			}
+		);
 	}
 }
 module.exports = Building;

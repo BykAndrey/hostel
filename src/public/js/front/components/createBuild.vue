@@ -292,11 +292,8 @@ export default {
 	},
 	filters: {
 		numberFilter: function(value) {
-			console.log(value);
 			let v = value.toString().replace(/[^\d.,]/gi, "");
-			console.log(v);
 			v = v === "" ? 0 : parseInt(v);
-			console.log(v);
 			return v;
 		}
 	},
@@ -319,10 +316,6 @@ export default {
 								length: (route.getLength() / 1000).toFixed(1)
 							});
 						}
-						console.log(
-							Metro.properties.get("name"),
-							(route.getLength() / 1000).toFixed(1) + " km"
-						);
 					});
 			});
 		},
@@ -335,7 +328,6 @@ export default {
 					this.countriesList = data;
 				})
 				.catch(e => {
-					console.log(e);
 				});
 		},
 		loadCity() {
@@ -482,7 +474,6 @@ export default {
 
 				if (ad) {
 					const list = this.countriesList.filter(e => {
-						console.log(e.iso3166, ad.getCountryCode());
 						return e.iso3166 === ad.getCountryCode();
 					});
 					if (list.length) {
