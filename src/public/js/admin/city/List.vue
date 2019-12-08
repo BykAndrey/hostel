@@ -1,36 +1,21 @@
 <template lang="pug">
-    .city
-        .create(v-if="countries.length > 0")
-          select(v-model="editEl.country_id" placeholder="Страна")
-            option(v-for="item in countries" :key="item.id" :value="item._id") {{ item.name }}
-          input.create(v-model="editEl.name" placeholder="Название города")
-          input.create(v-model="editEl.osme" placeholder="OSME")
-          .create__type
-            label
-              input(type="radio" name="level" value="100" v-model="editEl.level")
-              span Крупный город
-            label
-              input(type="radio" name="level" value="200" v-model="editEl.level")
-              span Средний город
-            label
-              input(type="radio" name="level" value="300" v-model="editEl.level")
-              span Маленький город 
-            label
-              input(type="radio" name="level" value="400" v-model="editEl.level")
-              span гордской поселок/деревня/село/хутор
-          .create__metro
-            span.item(v-for="el in editEl.metro") {{ el }}
-          .create__addmetro 
-            input(v-model="newmetro")
-            button.c-btn(@click="addMetro") Добавить Станцию
-          button.c-btn(v-if="!editEl._id" @click="create") Создать
-          button.c-btn(v-if="editEl._id" @click="update") Применить изменения
-        .item-row(v-for="el in list" :key="el._id") 
-            .item-row__name(v-if="!el.edit") {{ el.name }}
-            .item-row__level {{ el.level }}
-            .item-row__controlls
-                button.c-btn(@click="remove(el)") Удалить
-                button.c-btn(@click="setForEdit(el)") Редактировать
+	.city
+		p
+			b OSME:
+			a(href="http://data.esosedi.org/" target="_blank") Коды для полигонов на карте
+		.create(v-if="countries.length > 0")
+			select(v-model="editEl.country_id" placeholder="Страна")
+				option(v-for="item in countries" :key="item.id" :value="item._id") {{ item.name }}
+			input.create(v-model="editEl.name" placeholder="Название города")
+			input.create(v-model="editEl.osme" placeholder="OSME")
+			button.c-btn(v-if="!editEl._id" @click="create") Создать
+			button.c-btn(v-if="editEl._id" @click="update") Применить изменения
+		.item-row(v-for="el in list" :key="el._id") 
+			.item-row__name(v-if="!el.edit") {{ el.name }}
+			.item-row__level {{ el.level }}
+			.item-row__controlls
+				button.c-btn(@click="remove(el)") Удалить
+				button.c-btn(@click="setForEdit(el)") Редактировать
         
 </template>
 <script>
@@ -42,8 +27,6 @@ export default {
 				_id: null,
 				country_id: "",
 				name: "",
-				level: 200,
-				metro: [],
 				osme: ""
 			},
 			newmetro: "",
@@ -93,7 +76,6 @@ export default {
 				return false;
 			}
 			let data = { ...this.editEl };
-			data.metro = JSON.stringify(data.metro);
 			axios({
 				method: "post",
 				url: this.$store.state.server + "/api/city",
@@ -101,7 +83,6 @@ export default {
 			}).then(({ data }) => {
 				this.editEl._id = null;
 				this.editEl.name = "";
-				this.editEl.metro = [];
 				this.editEl.osme = "";
 				this.reloadList();
 			});

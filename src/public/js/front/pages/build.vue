@@ -2,7 +2,7 @@
 	.building.container
 		.building__left
 			.building__title {{item.title}} 
-			.address(v-if="item.country_id&&item.city_id.name") {{item.country_id.name}}, {{item.city_id.name}}, {{item.address}}
+			.address(v-if="item.country_id&&item.city_id") {{item.country_id.name}}, {{item.city_id.name}}, {{item.address}}
 			.metro 
 				.item(v-for="met in item.metro_auto") {{met.name}} ({{met.length}} км.)	
 			.features

@@ -223,6 +223,30 @@ class Building {
 			return res.status(200).send(b);
 		});
 	}
+	async deleteBuild(req, res) {
+		res.header('Access-Control-Allow-Origin', '*');
+		let key = userLib.getToken(req);
+
+		if (!key) {
+			return res.sendStatus(401);
+		}
+
+		let user = await userLib.userByToken(key);
+		if (!user) {
+			return res.sendStatus(401);
+		}
+		BuildingModel.deleteOne(
+			{
+				_id: req.params.id
+			},
+			er => {
+				if (er) {
+					return res.send(er);
+				}
+				return res.sendStatus(200);
+			}
+		);
+	}
 	uploadImage(req, res) {
 		var form = new formidable.IncomingForm();
 		form.parse(req, function(err, fields, files) {
@@ -254,7 +278,14 @@ class Building {
 							},
 							function(finder, todo) {
 								if (finder) return res.send(finder);
-								return res.send(newObj);
+
+								BuildingModel.findOne({ _id: id }, function(
+									error,
+									data
+								) {
+									if (error) throw error; // если возникла ошибка
+									return res.send(data.photo);
+								});
 							}
 						);
 					});

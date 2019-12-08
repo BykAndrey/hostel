@@ -44,6 +44,9 @@ export default {
 	watch: {
 		params() {
 			this.loadPage();
+		},
+		moderated() {
+			this.page = 1;
 		}
 	},
 	mounted() {

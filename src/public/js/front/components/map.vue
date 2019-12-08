@@ -107,6 +107,11 @@ export default {
 		});
 	},
 	methods: {
+		dateFormat(value) {
+			const date = new Date(value);
+			return `${date.getDate()}/${date.getMonth() +
+				1}/${date.getFullYear()}`;
+		},
 		setPoint(c) {
 			this.map.geoObjects.removeAll();
 			this.map.setCenter(c);
@@ -208,9 +213,19 @@ export default {
 						: "";
 					let template = `
 						<div class="">${img}
-							<div>${e.type_deal === "rent" ? "Аренда" : "Продажа"}</div>
+							<div>
+								<b>${
+									e.type === "apartament" ||
+									e.type === "house"
+										? e.countroom + " комнат(ы)"
+										: "Комната"
+								}</b>
+								<span>${e.type_deal === "rent" ? "Аренда" : "Продажа"}</span>
+							</div>
+							<div>Площадь: ${e.live_area} м<sup>2</sup></div>
 							<div><b>$ ${e.price}</b></div>
 							<a href="/${e._id}" data-value="${e._id}" class="ballon-btn"> Подробнее</a>
+							<div>Обнавлено: <small>${this.dateFormat(e.createdAt)}</small></div>
 						</div>`;
 					return {
 						type: "Feature",

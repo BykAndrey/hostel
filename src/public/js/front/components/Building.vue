@@ -24,6 +24,7 @@
 </template>
 <script>
 import Vue from "vue";
+
 const status = Vue.component("status", {
 	props: ["value"],
 	template: `
@@ -99,10 +100,16 @@ export default {
 			return data[this.el.type];
 		},
 		address() {
-			return `${this.el.city_id.name}  ${this.el.address}`;
+			if (this.el && this.el.city_id && this.el.address) {
+				return `${this.el.city_id.name}  ${this.el.address}`;
+			}
+			return "";
 		},
 		fullAddress() {
-			return `${this.el.country_id.name}  ${this.el.city_id.name}  ${this.el.address}`;
+			if (this.el && this.el.country_id && this.el.city_id) {
+				return `${this.el.country_id.name}  ${this.el.city_id.name}  ${this.el.address}`;
+			}
+			return "";
 		}
 	},
 	created() {}

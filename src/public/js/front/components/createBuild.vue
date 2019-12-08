@@ -87,17 +87,20 @@
 				.field__title Опубликовано
 				.field__value
 					input( type="checkbox" v-model="active")
-			button.c-btn(v-if="id==undefined" v-on:click="baseCreate") Создать
-			button.c-btn(v-else v-on:click="baseEdit") Редактировать
-			hr
-			//Map(:address = "countyName + ' ' + CityName + ' ' + address" @coords="getCoords")
-			
+			button.c-btn(v-if="id==undefined" v-on:click="baseCreate") Сохранить
+			button.c-btn(v-if="id" v-on:click="baseEdit") Сохранить
+			button.c-btn(v-if="id" v-on:click="deleteBuild") Удалить		
 		fieldset.fieldset(v-if="id!==undefined")
 			legend Изображения
-			template(v-for="(item,i) in photo")
-				img(:src="item.url", width="100px" @click="removeImage(item._id)")
-			input(type="file",v-on:change="fileChange")
-			button.c-btn(v-on:click="addImage") Загрузить
+			div.images
+				div(v-for="(item,i) in photo" :key="item._id")
+					img(:src="item.url", width="200px")
+					button.c-btn(@click="removeImage(item._id)") Удалить
+			div.load-image
+				label
+					input(type="file",v-on:change="fileChange")
+					span Выберите файл
+				button.c-btn(v-on:click="addImage") Загрузить
 </template>
 <script>
 import axios from "axios";
@@ -292,9 +295,12 @@ export default {
 	},
 	filters: {
 		numberFilter: function(value) {
-			let v = value.toString().replace(/[^\d.,]/gi, "");
-			v = v === "" ? 0 : parseInt(v);
-			return v;
+			if (value) {
+				let v = value.toString().replace(/[^\d.,]/gi, "");
+				v = v === "" ? 0 : parseInt(v);
+				return v;
+			}
+			return 0;
 		}
 	},
 	methods: {
@@ -327,8 +333,7 @@ export default {
 				.then(({ data }) => {
 					this.countriesList = data;
 				})
-				.catch(e => {
-				});
+				.catch(e => {});
 		},
 		loadCity() {
 			axios({
@@ -422,15 +427,34 @@ export default {
 				}
 			}).then(res => {});
 		},
+		async deleteBuild() {
+			const isRemove = confirm("Уверены, что хотите удалить?");
+			if (isRemove) {
+				await axios({
+					method: "delete",
+					url:
+						this.$store.state.server +
+						"/api/building/delete/" +
+						this.$route.params.id,
+
+					headers: {
+						Authorization: `Bearer ${this.$store.state.userData.token}`
+					}
+				})
+					.then(res => {
+						this.$router.push("/account");
+					})
+					.catch(e => {});
+			}
+		},
 		addImage() {
-			let self = this;
 			let formData = new FormData();
 			formData.append("image", this.file[0]);
 			formData.append("id", this.id);
 
 			axios
 				.post(
-					self.$store.state.server + "/api/building/upload-image",
+					this.$store.state.server + "/api/building/upload-image",
 					formData,
 					{
 						headers: {
@@ -439,11 +463,14 @@ export default {
 						}
 					}
 				)
-				.then(function({ data }) {
-					self.photo.push(data);
+				.then(({ data }) => {
+					console.log(this);
+					this.photo = data;
+					console.log(this.photo);
 				});
 		},
 		removeImage(i) {
+			console.log(i);
 			axios({
 				method: "post",
 				url: `${this.$store.state.server}/api/building/remove-image`,
@@ -567,5 +594,22 @@ textarea {
 	margin-right: 10px;
 	margin-bottom: 10px;
 	background: white;
+}
+.images {
+	display: flex;
+	flex-wrap: wrap;
+	div {
+		flex: 0 0 200px;
+		margin-right: 20px;
+		margin-bottom: 20px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-direction: column;
+		img {
+			max-width: 200px;
+			max-height: 150px;
+		}
+	}
 }
 </style>

@@ -18,7 +18,10 @@ module.exports = function(app, db) {
 	app.use('/api/*', function(req, res, next) {
 		res.header('Access-Control-Allow-Origin', '*');
 		res.header('Access-Control-Allow-Credentials', 'true');
-		res.header('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT');
+		res.header(
+			'Access-Control-Allow-Methods',
+			'GET,HEAD,OPTIONS,POST,PUT,DELETE'
+		);
 		res.header(
 			'Access-Control-Allow-Headers',
 			'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, Authorization'
@@ -31,6 +34,7 @@ module.exports = function(app, db) {
 	app.post('/api/building/upload-image', building.uploadImage.bind(building));
 	app.post('/api/building/remove-image', building.removeImage.bind(building));
 	// app.post('/api/building/edit/',building.getList.bind(building));
+	app.delete('/api/building/delete/:id', building.deleteBuild.bind(building));
 	app.put('/api/building/edit/:id', building.edit.bind(building));
 	app.get('/api/building/user', building.getListUser.bind(building));
 	app.get('/api/building/:id', building.getOne.bind(building));
@@ -66,7 +70,7 @@ module.exports = function(app, db) {
 	app.get('/api/users', userC.users.bind(userC));
 	app.post('/api/users', userC.create.bind(userC));
 	app.put('/api/users', userC.edit.bind(userC));
-	app.get('/admin', function(req, res) {
+	app.get('/admin/', function(req, res) {
 		res.sendFile(path.resolve('./dist/admin.html'));
 		// res.sendFile(__dirname + "/dist/index.html");
 	});

@@ -1,57 +1,62 @@
 <template>
 	<div :class="'build '+statusClass">
 		<template v-if="value">
-			<b
-				class="build__date"
-			>Обновлено: {{value.updatedAt | dateFormat}} Создано: {{value.createdAt | dateFormat}}</b>
-			<div class="build__top">
-				<div class="build__prop build__prop--type-deal">{{type_deal}}</div>
-				<div class="build__prop build__prop--type">{{type}}</div>
-				<div :class="'build__prop build__prop--status '+ statusClass">{{statusText}}</div>
+			<div class="build__photo">
+				<img v-if="value.photo[0]" :src="value.photo[0].url" :alt="value.photo[0].desc" width="200" />
 			</div>
-			<div class="build__head">
-				<div class="build__title">
-					<b>Заголовок:</b>
-					{{value.title}}
+			<div class="build__text">
+				<b
+					class="build__date"
+				>Обновлено: {{value.updatedAt | dateFormat}} Создано: {{value.createdAt | dateFormat}}</b>
+				<div class="build__top">
+					<div class="build__prop build__prop--type-deal">{{type_deal}}</div>
+					<div class="build__prop build__prop--type">{{type}}</div>
+					<div :class="'build__prop build__prop--status '+ statusClass">{{statusText}}</div>
 				</div>
-				<div class="build__title">
-					<b>Адрес:</b>
-					{{value.address}}
+				<div class="build__head">
+					<div class="build__title">
+						<b>Заголовок:</b>
+						{{value.title}}
+					</div>
+					<div class="build__title">
+						<b>Адрес:</b>
+						{{value.address}}
+					</div>
+					<b class="build__price">{{value.price}}$</b>
 				</div>
-				<b class="build__price">{{value.price}}$</b>
-			</div>
-			<button v-if="!isShow" class="c-btn" @click="e=>isShow=true">Показать полностью</button>
-			<div v-if="isShow" class="build__desc">{{value.desc}}</div>
+				<button v-if="!isShow" class="c-btn" @click="e=>isShow=true">Показать полностью</button>
+				<div v-if="isShow" class="build__desc">{{value.desc}}</div>
 
-			<div v-if="isShow" class="info">
-				<p>
-					<b>Количество комнат:</b>
-					{{value.countroom}}/{{value.countroomMax}}
-				</p>
-				<p>
-					<b>Площадь (жилая/общая/кухня):</b>
-					{{value.live_area}}/{{value.total_area}}/{{value.kitchen_area}}
-				</p>
-				<p>
-					<b>Этаж:</b>
-					{{value.level}}/{{value.levelMax}}
-				</p>
-				<p>
-					<b>Раздельный санузел:</b>
-					{{value.restroom ? 'Да':'Нет'}}
-				</p>
+				<div v-if="isShow" class="info">
+					<p>
+						<b>Количество комнат:</b>
+						{{value.countroom}}/{{value.countroomMax}}
+					</p>
+					<p>
+						<b>Площадь (жилая/общая/кухня):</b>
+						{{value.live_area}}/{{value.total_area}}/{{value.kitchen_area}}
+					</p>
+					<p>
+						<b>Этаж:</b>
+						{{value.level}}/{{value.levelMax}}
+					</p>
+					<p>
+						<b>Раздельный санузел:</b>
+						{{value.restroom ? 'Да':'Нет'}}
+					</p>
+				</div>
+				<button v-if="value.moderated !==0" class="c-btn allow" @click="e=>sendStatus(0)">Разрешить</button>
+				<button
+					v-if="value.moderated !==2"
+					class="c-btn disallow"
+					@click="e=>sendStatus(2)"
+				>Заблокировать</button>
+				<button
+					v-if="value.moderated !==1"
+					class="c-btn on-moderation"
+					@click="e=>sendStatus(1)"
+				>На проверку</button>
 			</div>
-			<button v-if="value.moderated !==0" class="c-btn allow" @click="e=>sendStatus(0)">Разрешить</button>
-			<button
-				v-if="value.moderated !==2"
-				class="c-btn disallow"
-				@click="e=>sendStatus(2)"
-			>Заблокировать</button>
-			<button
-				v-if="value.moderated !==1"
-				class="c-btn on-moderation"
-				@click="e=>sendStatus(1)"
-			>На проверку</button>
 		</template>
 		<b v-else>Ошибка отображения</b>
 	</div>
@@ -145,6 +150,8 @@ export default {
 	width: 100%;
 	background: white;
 	position: relative;
+	display: flex;
+
 	&.allow {
 		border-top-color: #00a017;
 	}
@@ -165,6 +172,12 @@ export default {
 	}
 	&:hover &__top {
 		opacity: 1;
+	}
+	&__photo {
+		flex: 0 0 200px;
+		margin-right: 20px;
+		img {
+		}
 	}
 	&__top {
 		display: flex;
