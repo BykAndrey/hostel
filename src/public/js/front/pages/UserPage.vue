@@ -24,92 +24,92 @@
 
 </template>
 <script>
-import axios from "axios";
-import listBuildings from "./../components/listBuildings.vue";
-import createBuild from "./../components/createBuild.vue";
+import axios from 'axios';
+import listBuildings from './../components/listBuildings.vue';
+import createBuild from './../components/createBuild.vue';
 export default {
-  name: "userPage",
-  components: {
-    listBuildings,
-    createBuild
-  },
-  data() {
-    return {
-      buildigns: [],
-      list: [],
-      add: false,
-      errors: {},
-      inf: {
-        name: "",
-        phone: ""
-      }
-    };
-  },
+	name: 'userPage',
+	components: {
+		listBuildings,
+		createBuild
+	},
+	data() {
+		return {
+			buildigns: [],
+			list: [],
+			add: false,
+			errors: {},
+			inf: {
+				name: '',
+				phone: ''
+			}
+		};
+	},
 
-  created() {
-    this.$store.dispatch("GET_COOKIE").then(() => {
-      this.$store.dispatch("CHECK_USER").then(() => {
-        this.$store.dispatch("GET_PROFILE");
-      });
-    });
-    axios({
-      method: "get",
-      url: this.$store.state.server + "/api/building/user",
-      headers: {
-        Authorization: `Bearer ${this.$store.state.userData.token}`
-      }
-    }).then(({ data }) => {
-      this.list = data.data;
-    });
-  },
-  computed: {
-    user() {
-      var user = this.$store.state.user;
-      return this.$store.state.userData;
-    }
-  },
-  watch: {
-    user() {
-      this.inf = this.user;
-    }
-  },
-  methods: {
-    save() {
-      this.errors = {};
-      if (this.inf.name.length === 0) {
-        this.errors.name = "Заполните имя";
-      }
-      if (this.inf.phone.length === 0) {
-        this.errors.phone = "Заполните телефон";
-      }
-      if (Object.key(this.errors).length) {
-        return false;
-      }
-      axios({
-        method: "put",
-        url: this.$store.state.server + "/api/users",
-        headers: {
-          Authorization: `Bearer ${this.$store.state.userData.token}`
-        },
-        data: this.inf
-      });
-    }
-  }
+	created() {
+		this.$store.dispatch('GET_COOKIE').then(() => {
+			this.$store.dispatch('CHECK_USER').then(() => {
+				this.$store.dispatch('GET_PROFILE');
+			});
+		});
+		axios({
+			method: 'get',
+			url: this.$store.state.server + '/api/building/user',
+			headers: {
+				Authorization: `Bearer ${this.$store.state.userData.token}`
+			}
+		}).then(({ data }) => {
+			this.list = data.data;
+		});
+	},
+	computed: {
+		user() {
+			var user = this.$store.state.user;
+			return this.$store.state.userData;
+		}
+	},
+	watch: {
+		user() {
+			this.inf = this.user;
+		}
+	},
+	methods: {
+		save() {
+			this.errors = {};
+			if (this.inf.name.length === 0) {
+				this.errors.name = 'Заполните имя';
+			}
+			if (this.inf.phone.length === 0) {
+				this.errors.phone = 'Заполните телефон';
+			}
+			if (Object.keys(this.errors).length) {
+				return false;
+			}
+			axios({
+				method: 'put',
+				url: this.$store.state.server + '/api/users',
+				headers: {
+					Authorization: `Bearer ${this.$store.state.userData.token}`
+				},
+				data: this.inf
+			});
+		}
+	}
 };
 </script>
 <style lang="scss">
 .p-user__add {
-  margin: 25px 0;
+	margin: 25px 0;
 }
 fieldset {
-  padding: 20px;
+	padding: 20px;
 }
 legend {
-  font-size: 16px;
-  font-weight: 700;
+	font-size: 16px;
+	font-weight: 700;
 }
 
 hr {
-  margin: 20px 0;
+	margin: 20px 0;
 }
 </style>

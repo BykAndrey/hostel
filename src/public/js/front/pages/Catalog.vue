@@ -62,8 +62,8 @@
 						.item__title Сортировать по
 						.item__value
 							select.c-select(v-model="sortBy")
-								option(value="updatedAt:asc") Дате: сначала новые
-								option(value="updatedAt:desc") Дате: сначала старые
+								option(value="updatedAt:desc") Дате: сначала новые
+								option(value="updatedAt:asc") Дате: сначала старые
 								option(value="price:asc") Цена: сначала дешевые
 								option(value="price:desc") Цена: сначала дорогие
 
@@ -72,17 +72,17 @@
 			Map(:class="!onMap?'map--map':''" :value="[[0,0]]" :builds="pageList" v-if="!onMap" :polygon="currentRegion" :isWorkCircle="isWorkCircle" :workCircleData="workCircleData")
 </template>
 <script>
-import axios from "axios";
-import building from "../components/Building.vue";
-import listBuildings from "../components/listBuildings.vue";
-import Map from "../components/map.vue";
-import radio from "../components/radio.vue";
-import lineSelect from "../components/lineSelect.vue";
-import osme from "osme";
-import pag from "../components/pag";
-import workCirle from "../components/WorkCircle";
+import axios from 'axios';
+import building from '../components/Building.vue';
+import listBuildings from '../components/listBuildings.vue';
+import Map from '../components/map.vue';
+import radio from '../components/radio.vue';
+import lineSelect from '../components/lineSelect.vue';
+import osme from 'osme';
+import pag from '../components/pag';
+import workCirle from '../components/WorkCircle';
 export default {
-	name: "catalog",
+	name: 'catalog',
 	components: {
 		building,
 		listBuildings,
@@ -94,24 +94,24 @@ export default {
 	},
 	data() {
 		return {
-			sortBy: "updatedAt:asc",
+			sortBy: 'updatedAt:desc',
 			countriesList: [],
-			countryId: "all",
+			countryId: 'all',
 			citiesList: [],
-			cityId: "all",
+			cityId: 'all',
 			onMap: true,
-			search: "",
+			search: '',
 			allitems: [],
 			pageList: [],
 			totalCountItems: 0,
 			cuurentList: [],
 			minprice: 0,
 			maxprice: 0,
-			dealType: "all",
-			houseType: "all",
-			countRoom: "all",
+			dealType: 'all',
+			houseType: 'all',
+			countRoom: 'all',
 			regionsList: [],
-			currentRegionId: "all",
+			currentRegionId: 'all',
 			currentPage: 1,
 			sizePerPage: 4,
 			isWorkCircle: false,
@@ -125,7 +125,7 @@ export default {
 	created() {
 		const self = this;
 		axios({
-			url: self.$store.state.server + "/api/countries"
+			url: self.$store.state.server + '/api/countries'
 		}).then(({ data }) => {
 			this.countriesList = data;
 			if (this.countriesList.length > 0) {
@@ -133,7 +133,7 @@ export default {
 			}
 		});
 		axios({
-			url: self.$store.state.server + "/api/city"
+			url: self.$store.state.server + '/api/city'
 		}).then(({ data }) => {
 			this.citiesList = data;
 		});
@@ -196,7 +196,7 @@ export default {
 		},
 		countryId(val) {
 			this.currentRegionId = null;
-			this.cityId = "all";
+			this.cityId = 'all';
 		},
 		regionsList() {
 			if (this.regionsList.length > 0) {
@@ -215,8 +215,9 @@ export default {
 	},
 	methods: {
 		getData() {
+			this.pageList = [];
 			axios({
-				url: this.$store.state.server + "/api/building",
+				url: this.$store.state.server + '/api/building',
 				params: this.filters
 			})
 				.then(({ data }) => {
@@ -228,7 +229,7 @@ export default {
 				});
 		},
 		regions(osmeID) {
-			osme.geoJSON(osmeID, { lang: "ru" }, data => {
+			osme.geoJSON(osmeID, { lang: 'ru' }, data => {
 				this.regionsList = data.features;
 			});
 		}
@@ -236,7 +237,7 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-@import "./../../../css/config.scss";
+@import './../../../css/config.scss';
 .p-catalog {
 	position: relative;
 	padding-top: 40px;
@@ -270,7 +271,7 @@ export default {
 		overflow: auto;
 		z-index: 1;
 	}
-	[type="checkbox"] {
+	[type='checkbox'] {
 		height: 10px;
 		width: 10px;
 	}

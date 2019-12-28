@@ -23,10 +23,10 @@
 		router-link.c-btn.el-building__edit(v-if="user" :to="'/'+el._id+'/edit'") Редактировать
 </template>
 <script>
-import Vue from "vue";
+import Vue from 'vue';
 
-const status = Vue.component("status", {
-	props: ["value"],
+const status = Vue.component('status', {
+	props: ['value'],
 	template: `
 			<div>
 				<div 
@@ -51,21 +51,22 @@ const status = Vue.component("status", {
 			`
 });
 export default {
-	name: "building",
-	props: ["el"],
+	name: 'building',
+	props: ['el'],
 	components: {
 		status
 	},
 	data() {
 		return {
 			swiperOption: {
+				slidesPerView: 1,
 				pagination: {
-					el: ".swiper-pagination",
-					type: "progressbar"
+					el: '.swiper-pagination',
+					type: 'progressbar'
 				},
 				navigation: {
-					nextEl: ".swiper-button-next",
-					prevEl: ".swiper-button-prev"
+					nextEl: '.swiper-button-next',
+					prevEl: '.swiper-button-prev'
 				}
 			}
 		};
@@ -73,7 +74,7 @@ export default {
 
 	computed: {
 		date() {
-			let d = new Date(this.el.createdAt);
+			let d = new Date(this.el.updatedAt);
 			return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
 		},
 		user() {
@@ -86,16 +87,16 @@ export default {
 		},
 		typeDeal() {
 			let data = {
-				sale: "Продажа",
-				rent: "Аренда"
+				sale: 'Продажа',
+				rent: 'Аренда'
 			};
 			return data[this.el.type_deal];
 		},
 		typeBuild() {
 			let data = {
-				apartament: "Квартира",
-				room: "Комната",
-				house: "Дом"
+				apartament: 'Квартира',
+				room: 'Комната',
+				house: 'Дом'
 			};
 			return data[this.el.type];
 		},
@@ -103,13 +104,13 @@ export default {
 			if (this.el && this.el.city_id && this.el.address) {
 				return `${this.el.city_id.name}  ${this.el.address}`;
 			}
-			return "";
+			return '';
 		},
 		fullAddress() {
 			if (this.el && this.el.country_id && this.el.city_id) {
 				return `${this.el.country_id.name}  ${this.el.city_id.name}  ${this.el.address}`;
 			}
-			return "";
+			return '';
 		}
 	},
 	created() {}

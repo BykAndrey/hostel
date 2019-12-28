@@ -1,21 +1,23 @@
 <template lang="pug">
 	div()
 		.list(ref="reflist")
-			.list__el(v-if="mounted" v-for="item in list" :class="'col-'+cols")
-				building(:el="item")
+			template(v-if="mounted && ready")
+				.list__el( v-for="item in list" :class="'col-'+cols")
+					building(:key="item._id" :el="item")
 </template>
 <script>
-import building from "./Building.vue";
+import building from './Building.vue';
 export default {
-	name: "listbuild",
-	props: ["list"],
+	name: 'listbuild',
+	props: ['list'],
 	data() {
 		return {
 			countItems: 5,
 			currentPage: 1,
 			size: 3,
 			cols: 4,
-			mounted: false
+			mounted: false,
+			ready: false
 		};
 	},
 	components: {
@@ -24,17 +26,17 @@ export default {
 	mounted() {
 		this.mounted = true;
 		this.calcWidth();
-		window.addEventListener("resize", this.calcWidth.bind(this));
+		window.addEventListener('resize', this.calcWidth.bind(this));
 	},
 	beforeDestroy() {
-		window.removeEventListener("resize", this.calcWidth.bind(this));
+		window.removeEventListener('resize', this.calcWidth.bind(this));
 	},
 	methods: {
 		calcWidth() {
+			this.ready = false;
 			const ref = this.$refs.reflist;
-
 			if (ref) {
-				const wdth = ref.clientWidth;
+				const wdth = ref.clientWidth || ref.innerWidth;
 				if (wdth > 960) {
 					this.cols = 4;
 				} else if (wdth > 750) {
@@ -45,17 +47,16 @@ export default {
 					this.cols = 1;
 				}
 			}
+			this.ready = true;
 		}
 	}
 };
 </script>
 <style lang="scss" scoped>
 .list {
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: flex-start;
 	margin-left: -20px;
 	&__el {
+		display: inline-block;
 		width: calc(25% - 20px);
 		margin-left: 20px;
 		margin-bottom: 20px;

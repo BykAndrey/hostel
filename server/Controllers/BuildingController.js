@@ -24,13 +24,17 @@ class Building {
 	}
 
 	getList(req, res) {
+		console.group('getList');
 		const page = parseInt(req.query.page);
 		const size = parseInt(req.query.size);
 		let skip = 0;
 		if (page !== -1) {
 			skip = (page - 1) * size;
 		}
-
+		console.log({
+			...req.query,
+			skip
+		});
 		const query = req.query;
 		let findParams = {};
 
@@ -51,12 +55,14 @@ class Building {
 					$gte: query.minprice
 				};
 			}
-			if (query.minprice) {
-				findParams.price.$lte = {
+			if (query.maxprice) {
+				console.log(query.maxprice);
+				findParams.price = {
 					...findParams.price,
 					$lte: query.maxprice
 				};
 			}
+			console.log({ findParams });
 		}
 		if (query.dealType && query.dealType !== 'all') {
 			findParams.type_deal = query.dealType;
@@ -91,7 +97,7 @@ class Building {
 		if (query.sort && query.sort !== 'updatedAt:desc') {
 			const arr = query.sort.split(':');
 			const field = arr[0];
-			const value = arr[1];
+			const value = arr[1].toUpperCase();
 			queryBuild.sort({ [field]: value });
 		} else {
 			queryBuild.sort({ updatedAt: 'desc' });
@@ -99,10 +105,12 @@ class Building {
 
 		queryBuild.exec(function(error, data) {
 			if (error) {
+				console.groupEnd();
 				return res.send(error);
 			}
 			BuildingModel.count(findParams, function(er2, d2) {
 				if (er2) {
+					console.groupEnd();
 					return res.send(er2);
 				}
 				res.header(
@@ -112,7 +120,7 @@ class Building {
 				res.header('Pragma', 'no-cache');
 				res.header('Expires', 0);
 				res.header('Access-Control-Allow-Origin', '*');
-				data = data.sort((a, b) => {
+				/*data = data.sort((a, b) => {
 					if (
 						new Date(a.updatedAt).getTime() >
 						new Date(b.updatedAt).getTime()
@@ -121,7 +129,8 @@ class Building {
 					} else {
 						return 1;
 					}
-				});
+				});*/
+				console.groupEnd();
 				return res.status(200).send({
 					data: data,
 					count: d2
