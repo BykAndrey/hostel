@@ -52,7 +52,7 @@
     "webpack-dev-server": "^3.2.0"
   },
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "formidable": "^1.2.1",
     "jshint": "^2.10.2",
     "mongoose-unique-validator": "^2.0.2",
